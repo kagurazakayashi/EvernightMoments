@@ -8,39 +8,45 @@ import (
 )
 
 func runConfigMode() {
-	currentFormat := LoadFormat()
-	fmt.Println("=== 照片重命名工具配置 ===")
-	fmt.Printf("当前保存的格式为: %s\n", currentFormat)
-	fmt.Println("请输入新的文件名格式 (直接回车将恢复默认 `YYYYMMDD_HHmmss_*` ):")
-	fmt.Println("变量提示: YYYY/MM/DD, HH/mm/ss, ##(编号), *(原名)")
-	fmt.Print("> ")
+	conf := LoadConfig()
+	fmt.Println("=== EvernightMoments 配置 ===")
+	fmt.Printf("当前格式: %s\n", conf.Format)
+	fmt.Printf("预览确认: %v\n", conf.Confirm)
+	fmt.Println("---------------------------------------------------------")
 
 	reader := bufio.NewReader(os.Stdin)
-	input, _ := reader.ReadString('\n')
-	input = strings.TrimSpace(input)
 
-	var finalFormat string
-	if input == "" {
-		// 使用者直接回車，嘗試刪除配置
-		err := DeleteFormat()
-		if err != nil && !os.IsNotExist(err) {
-			fmt.Printf("重置配置失败: %v\n", err)
-		} else {
-			fmt.Println("已恢复默认设置。")
-		}
-		finalFormat = defaultFormat
+	fmt.Println("1. 请输入文件名格式 (直接回车将恢复默认格式):")
+	fmt.Print("> ")
+	formatInput, _ := reader.ReadString('\n')
+	formatInput = strings.TrimSpace(formatInput)
+	if formatInput == "" {
+		conf.Format = defaultFormat
+		fmt.Println("-> 格式已重置为默认。")
 	} else {
-		// 儲存新配置
-		if err := SaveFormat(input); err != nil {
-			fmt.Printf("保存配置失败: %v\n", err)
-			return
-		}
-		fmt.Printf("格式已更新为: %s\n", input)
-		finalFormat = input
+		conf.Format = formatInput
+		fmt.Printf("-> 格式已设定为: %s\n", conf.Format)
 	}
 
-	// 輸出示例預覽
-	fmt.Println(finalFormat)
+	fmt.Println("\n2. 是否在重命名前开启预览确认? (y: 开启 / n: 直接重命名):")
+	fmt.Print("> ")
+	confirmInput, _ := reader.ReadString('\n')
+	confirmInput = strings.TrimSpace(strings.ToLower(confirmInput))
+	if confirmInput == "n" {
+		conf.Confirm = false
+		fmt.Println("-> 已关闭预览确认。请小心操作。")
+	} else {
+		conf.Confirm = true
+		fmt.Println("-> 已开启预览确认。")
+	}
+
+	// 儲存配置
+	configPath := getConfigPath()
+	if err := SaveConfig(conf, configPath); err != nil {
+		fmt.Printf("保存配置到 %s 失败: %v\n", configPath, err)
+	} else {
+		fmt.Println("\n配置已成功保存到 " + configPath)
+	}
 
 	fmt.Println("\n按回车键退出...")
 	reader.ReadString('\n')
