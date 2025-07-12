@@ -1,0 +1,1 @@
+go build . && EvernightMoments.exe _KYS0002.ARW

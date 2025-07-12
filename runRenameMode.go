@@ -8,9 +8,9 @@ import (
 	"strings"
 )
 
-// RenamePlan 存储重命名任务的细节
 type RenamePlan struct {
 	OldPath string
+	AbsPath string
 	NewPath string
 	NewName string
 	Source  string
@@ -22,10 +22,9 @@ func runRenameMode(files []string) {
 	var plans []RenamePlan
 	counter := 1
 
-	fmt.Println("正在准备重命名计划...")
+	fmt.Printf("命名格式: %s\n正在准备...\n\n", conf.Format)
 
 	for _, pattern := range files {
-		// 处理可能的通配符
 		matches, err := filepath.Glob(pattern)
 		if err != nil {
 			fmt.Printf("![错误] 无法解析路径: %s\n", pattern)
@@ -54,6 +53,7 @@ func runRenameMode(files []string) {
 
 			plans = append(plans, RenamePlan{
 				OldPath: path,
+				AbsPath: absPath,
 				NewPath: newPath,
 				NewName: newName,
 				Source:  source,
@@ -61,8 +61,9 @@ func runRenameMode(files []string) {
 			})
 
 			fmt.Printf("原文件: %s\n", absPath)
-			fmt.Printf("-> 依据 %s : %s , 应用格式: %s\n", source, rawTimeStr, conf.Format)
-			fmt.Printf("-> 新文件名: %s\n\n", newName)
+			fmt.Printf("-> 依据 %s : %s\n", source, rawTimeStr)
+			fmt.Printf("-> 新文件名: %s\n", newName)
+			fmt.Println()
 
 			counter++
 		}
@@ -73,6 +74,7 @@ func runRenameMode(files []string) {
 		return
 	}
 
+	// 确认逻辑
 	proceed := true
 	if conf.Confirm {
 		fmt.Printf("共计 %d 个文件，确认执行重命名? (y/n): ", len(plans))
@@ -84,28 +86,40 @@ func runRenameMode(files []string) {
 		}
 	}
 
+	// 正式执行重命名
 	if proceed {
-		fmt.Println("\n开始处理...")
+		fmt.Print("开始处理...\n\n")
 		successCount := 0
 		for _, p := range plans {
+			fmt.Printf("原文件: %s\n", p.AbsPath)
+			fmt.Printf("-> 依据 %s : %s\n", p.Source, p.RawTime)
+			fmt.Printf("-> 新文件名: %s\n", p.NewName)
+
 			if p.OldPath == p.NewPath {
-				fmt.Printf("[忽略] 文件名未变化: %s\n", filepath.Base(p.OldPath))
+				fmt.Println("-> 跳过: 文件名未发生变化")
+				fmt.Println()
 				continue
 			}
 
+			// 检查目标是否存在
 			if _, err := os.Stat(p.NewPath); err == nil {
-				fmt.Printf("[跳过] 目标已存在: %s\n", p.NewName)
+				fmt.Println("-> 重命名失败！错误原因: 目标文件已存在")
+				fmt.Println()
 				continue
 			}
 
-			if err := os.Rename(p.OldPath, p.NewPath); err != nil {
-				fmt.Printf("[失败] %s -> %v\n", filepath.Base(p.OldPath), err)
+			// 执行重命名
+			err := os.Rename(p.OldPath, p.NewPath)
+			if err != nil {
+				fmt.Printf("-> 重命名失败！错误原因: %v\n", err)
 			} else {
+				fmt.Println("-> 重命名成功。")
 				successCount++
 			}
+			fmt.Println()
 		}
-		fmt.Printf("\n处理完成！成功: %d, 总计: %d\n", successCount, len(plans))
+		fmt.Printf("处理完成！成功: %d, 失败: %d, 总计: %d\n", successCount, len(plans)-successCount, len(plans))
 	} else {
-		fmt.Println("\n已取消操作。")
+		fmt.Println("已取消操作。")
 	}
 }
