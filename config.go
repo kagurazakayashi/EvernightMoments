@@ -12,8 +12,6 @@ type Config struct {
 	Confirm bool   `json:"confirm"` // 是否需要預覽確認
 }
 
-const defaultFormat = "YYYYMMDD_HHmmss_*"
-
 // 獲取配置檔案路徑
 func getConfigPath() string {
 	exePath, err := os.Executable()

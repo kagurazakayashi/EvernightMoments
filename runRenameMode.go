@@ -18,13 +18,20 @@ type RenamePlan struct {
 }
 
 func runRenameMode(files []string) {
+	fmt.Println(outLine)
+	fmt.Println(evernightMoments + " v" + evernightMomentsVersion)
 	conf := LoadConfig()
 	var plans []RenamePlan
 	counter := 1
-
-	fmt.Printf("命名格式: %s\n正在准备...\n\n", conf.Format)
-
+	fmt.Println(outLine)
+	fmt.Println("当前重命名的格式为: " + conf.Format + " 。")
+	fmt.Println("要配置重命名的格式，请不带参数直接运行 " + evernightMoments + " 。")
+	fmt.Println(outLine)
+	fmt.Println("正在分析要重命名的文件...")
+	fmt.Println()
+	i := 0
 	for _, pattern := range files {
+		i++
 		matches, err := filepath.Glob(pattern)
 		if err != nil {
 			fmt.Printf("![错误] 无法解析路径: %s\n", pattern)
@@ -60,7 +67,7 @@ func runRenameMode(files []string) {
 				RawTime: rawTimeStr,
 			})
 
-			fmt.Printf("原文件: %s\n", absPath)
+			fmt.Printf("[%d] 原文件: %s\n", i, absPath)
 			fmt.Printf("-> 依据 %s : %s\n", source, rawTimeStr)
 			fmt.Printf("-> 新文件名: %s\n", newName)
 			fmt.Println()
@@ -74,8 +81,8 @@ func runRenameMode(files []string) {
 		return
 	}
 
-	// 确认逻辑
 	proceed := true
+	fmt.Println(outLine)
 	if conf.Confirm {
 		fmt.Printf("共计 %d 个文件，确认执行重命名? (y/n): ", len(plans))
 		reader := bufio.NewReader(os.Stdin)
@@ -88,10 +95,13 @@ func runRenameMode(files []string) {
 
 	// 正式执行重命名
 	if proceed {
-		fmt.Print("开始处理...\n\n")
+		fmt.Println("开始正式进行文件重命名...")
+		fmt.Println()
 		successCount := 0
+		i := 0
 		for _, p := range plans {
-			fmt.Printf("原文件: %s\n", p.AbsPath)
+			i++
+			fmt.Printf("[%d] 原文件: %s\n", i, p.AbsPath)
 			fmt.Printf("-> 依据 %s : %s\n", p.Source, p.RawTime)
 			fmt.Printf("-> 新文件名: %s\n", p.NewName)
 
@@ -118,7 +128,7 @@ func runRenameMode(files []string) {
 			}
 			fmt.Println()
 		}
-		fmt.Printf("处理完成！成功: %d, 失败: %d, 总计: %d\n", successCount, len(plans)-successCount, len(plans))
+		fmt.Printf("\n处理完成！成功: %d, 失败: %d, 总计: %d\n", successCount, len(plans)-successCount, len(plans))
 	} else {
 		fmt.Println("已取消操作。")
 	}
