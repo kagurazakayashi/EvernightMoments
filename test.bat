@@ -12,4 +12,5 @@ for %%f in (*.jpg *.arw *.cr3 *.nef) do (
 )
 ECHO ON
 EvernightMoments.exe !file_list!
+DIR
 CD ..
