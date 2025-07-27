@@ -4,24 +4,48 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
 
 func runConfigMode() {
+	conf := LoadConfig()
+	i18n := NewI18nManager()
+	reader := bufio.NewReader(os.Stdin)
+	if conf.Language == "" {
+		conf.Language = i18n.GetSystemLanguage()
+	}
+	fmt.Println("Current language: " + conf.Language)
+	fmt.Println("Change display language (Press Enter to keep current):")
+	fmt.Println("1. English  2. 简体中文  3. 繁體中文  4. 日本語")
+	fmt.Print("> ")
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+	if input != "" {
+		choice, err := strconv.Atoi(input)
+		if err == nil && choice >= 1 && choice <= len(i18n.support) {
+			selectedTag := i18n.support[choice-1]
+			conf.Language = selectedTag.String()
+		} else {
+			fmt.Println("Invalid input. No changes made.")
+		}
+	}
+	i18n.SetLanguage(conf.Language)
+	fmt.Println("Current language: " + conf.Language)
+
 	fmt.Println(outLine)
 	fmt.Println(evernightMoments + " v" + evernightMomentsVersion)
-	fmt.Println("予瞬息以永恒，于长夜留余温。")
-	fmt.Println(evernightMoments + " 是一款通过提取照片原始拍摄时间，为您自动重命名影像文件的工具。")
+	fmt.Println(i18n.T("介绍1"))
+	fmt.Println(evernightMoments + " " + i18n.T("介绍2"))
 	fmt.Println("https://github.com/kagurazakayashi/EvernightMoments")
 	fmt.Println(outLine)
-	conf := LoadConfig()
 	fmt.Println("使用方式: " + evernightMoments + " [照片文件1] [照片文件2] ...")
 	fmt.Println("如果直接运行而不提供照片文件，则现在进入配置模式。")
 	fmt.Println(outLine)
 	fmt.Println("软件配置")
+
 	fmt.Println(outLine)
-	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("(1/2) 配置文件名命名格式")
 	fmt.Println("当前格式: " + conf.Format)
 	fmt.Println("可用变量:")
@@ -41,6 +65,7 @@ func runConfigMode() {
 	}
 	conf.Format = formatInput
 	fmt.Printf("-> 格式已设定为: %s\n", conf.Format)
+
 	fmt.Println(outLine)
 	fmt.Println("(2/2) 是否在重命名前开启预览确认? ")
 	fmt.Printf("当前设置: %v\n", conf.Confirm)
@@ -56,6 +81,7 @@ func runConfigMode() {
 		conf.Confirm = true
 		fmt.Println("-> 已开启预览确认。")
 	}
+
 	fmt.Println(outLine)
 	configPath := getConfigPath()
 	if err := SaveConfig(conf, configPath); err != nil {

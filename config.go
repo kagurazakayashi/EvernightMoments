@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Format  string `json:"format"`
-	Confirm bool   `json:"confirm"` // 是否需要預覽確認
+	Language string `json:"language"`
+	Format   string `json:"format"`
+	Confirm  bool   `json:"confirm"`
 }
 
 // 獲取配置檔案路徑
