@@ -57,5 +57,6 @@ func (m *I18nManager) SetLanguage(langStr string) {
 }
 
 func (m *I18nManager) T(key string, args ...interface{}) string {
-	return m.printer.Sprintf(key, args...)
+	text := m.printer.Sprintf(key, args...)
+	return text
 }

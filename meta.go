@@ -29,5 +29,5 @@ func GetPhotoTime(filePath string) (time.Time, string, error) {
 	if err != nil {
 		return time.Time{}, "", err
 	}
-	return info.ModTime(), "文件修改日期", nil
+	return info.ModTime(), i18n.T("修改日期"), nil
 }

@@ -24,17 +24,17 @@ func runRenameMode(files []string) {
 	var plans []RenamePlan
 	counter := 1
 	fmt.Println(outLine)
-	fmt.Println("当前重命名的格式为: " + conf.Format + " 。")
-	fmt.Println("要配置重命名的格式，请不带参数直接运行 " + evernightMoments + " 。")
+	fmt.Println(i18n.T("当前格式") + ": " + conf.Format)
+	fmt.Println(i18n.T("要配置格式") + " " + evernightMoments)
 	fmt.Println(outLine)
-	fmt.Println("正在分析要重命名的文件...")
+	fmt.Println(i18n.T("正在分析") + "...")
 	fmt.Println()
 	i := 0
 	for _, pattern := range files {
 		i++
 		matches, err := filepath.Glob(pattern)
 		if err != nil {
-			fmt.Printf("![错误] 无法解析路径: %s\n", pattern)
+			fmt.Printf("%s %s: %s\n", i18n.T("错误"), i18n.T("路径错误"), pattern)
 			continue
 		}
 
@@ -46,7 +46,7 @@ func runRenameMode(files []string) {
 
 			t, source, err := GetPhotoTime(path)
 			if err != nil {
-				fmt.Printf("![跳过] 无法读取文件信息: %s\n", path)
+				fmt.Printf("%s %s: %s\n", i18n.T("跳过"), i18n.T("文件错误"), pattern)
 				continue
 			}
 
@@ -67,9 +67,9 @@ func runRenameMode(files []string) {
 				RawTime: rawTimeStr,
 			})
 
-			fmt.Printf("[%d] 原文件: %s\n", i, absPath)
-			fmt.Printf("-> 依据 %s : %s\n", source, rawTimeStr)
-			fmt.Printf("-> 新文件名: %s\n", newName)
+			fmt.Printf("[%d] %s: %s\n", i, i18n.T("原文件"), absPath)
+			fmt.Printf("-> %s %s : %s\n", i18n.T("依据"), source, rawTimeStr)
+			fmt.Printf("-> %s: %s\n", i18n.T("新文件名"), newName)
 			fmt.Println()
 
 			counter++
@@ -77,14 +77,15 @@ func runRenameMode(files []string) {
 	}
 
 	if len(plans) == 0 {
-		fmt.Println("未发现可处理的照片文件。")
+		fmt.Println(i18n.T("没有文件"))
 		return
 	}
 
 	proceed := true
 	fmt.Println(outLine)
 	if conf.Confirm {
-		fmt.Printf("共计 %d 个文件，确认执行重命名? (y/n): ", len(plans))
+		fmt.Print(i18n.T("共计", len(plans)))
+		fmt.Printf("%s? (y/n): ", i18n.T("确认"))
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(strings.ToLower(input))
@@ -95,41 +96,45 @@ func runRenameMode(files []string) {
 
 	// 正式执行重命名
 	if proceed {
-		fmt.Println("开始正式进行文件重命名...")
+		fmt.Println(i18n.T("开始") + "...")
 		fmt.Println()
 		successCount := 0
 		i := 0
 		for _, p := range plans {
 			i++
-			fmt.Printf("[%d] 原文件: %s\n", i, p.AbsPath)
-			fmt.Printf("-> 依据 %s : %s\n", p.Source, p.RawTime)
-			fmt.Printf("-> 新文件名: %s\n", p.NewName)
+			fmt.Printf("[%d] %s: %s\n", i, i18n.T("原文件"), p.AbsPath)
+			fmt.Printf("-> %s %s : %s\n", i18n.T("依据"), p.Source, p.RawTime)
+			fmt.Printf("-> %s: %s\n", i18n.T("新文件名"), p.NewName)
 
 			if p.OldPath == p.NewPath {
-				fmt.Println("-> 跳过: 文件名未发生变化")
+				fmt.Printf("-> %s: %s\n", i18n.T("跳过"), i18n.T("无变化"))
 				fmt.Println()
 				continue
 			}
 
-			// 检查目标是否存在
 			if _, err := os.Stat(p.NewPath); err == nil {
-				fmt.Println("-> 重命名失败！错误原因: 目标文件已存在")
+				fmt.Println("-> " + i18n.T("重命名失败") + i18n.T("已存在"))
 				fmt.Println()
 				continue
 			}
 
-			// 执行重命名
 			err := os.Rename(p.OldPath, p.NewPath)
 			if err != nil {
-				fmt.Printf("-> 重命名失败！错误原因: %v\n", err)
+				fmt.Printf("-> %s: %v\n", i18n.T("重命名失败"), err)
 			} else {
-				fmt.Println("-> 重命名成功。")
+				fmt.Println("-> " + i18n.T("重命名成功"))
 				successCount++
 			}
 			fmt.Println()
 		}
-		fmt.Printf("\n处理完成！成功: %d, 失败: %d, 总计: %d\n", successCount, len(plans)-successCount, len(plans))
+		fmt.Println(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans)))
+		fmt.Print(i18n.T("回车退出") + "...")
+		reader := bufio.NewReader(os.Stdin)
+		reader.ReadString('\n')
 	} else {
-		fmt.Println("已取消操作。")
+		fmt.Println(i18n.T("取消"))
+		fmt.Print(i18n.T("回车退出") + "...")
+		reader := bufio.NewReader(os.Stdin)
+		reader.ReadString('\n')
 	}
 }
