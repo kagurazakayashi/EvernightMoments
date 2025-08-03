@@ -11,6 +11,7 @@ type Config struct {
 	Language string `json:"language"`
 	Format   string `json:"format"`
 	Confirm  bool   `json:"confirm"`
+	EndPause bool   `json:"endpause"`
 }
 
 // 獲取配置檔案路徑
@@ -30,7 +31,7 @@ func LoadConfig() Config {
 	configPath := getConfigPath()
 	data, err := os.ReadFile(configPath)
 	// 預設配置：開啟確認預覽
-	defaultConf := Config{Format: defaultFormat, Confirm: true}
+	defaultConf := Config{Format: defaultFormat, Confirm: true, EndPause: true}
 
 	if err != nil {
 		return defaultConf

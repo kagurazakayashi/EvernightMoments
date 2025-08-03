@@ -46,7 +46,7 @@ func runConfigMode() {
 	fmt.Println(i18n.T("软件配置"))
 
 	fmt.Println(outLine)
-	fmt.Println("(1/2) " + i18n.T("配置文件名命名格式"))
+	fmt.Println("(1/3) " + i18n.T("配置文件名命名格式"))
 	fmt.Println(i18n.T("当前格式") + ": " + conf.Format)
 	fmt.Println(i18n.T("可用变量"))
 	exampleName := GenerateNewName(defaultFormat, time.Now(), "Photo.jpg", 1)
@@ -60,7 +60,7 @@ func runConfigMode() {
 	fmt.Printf("-> "+i18n.T("格式已设定")+": %s\n", conf.Format)
 
 	fmt.Println(outLine)
-	fmt.Println("(2/2) " + i18n.T("询问预览"))
+	fmt.Println("(2/3) " + i18n.T("询问预览"))
 	fmt.Printf("%s: %v\n", i18n.T("当前设置"), conf.Confirm)
 	fmt.Print(i18n.T("询问预览说明"))
 	confirmInput, _ := reader.ReadString('\n')
@@ -74,12 +74,27 @@ func runConfigMode() {
 	}
 
 	fmt.Println(outLine)
+	fmt.Println("(3/3) " + i18n.T("结束等待"))
+	fmt.Printf("%s: %v\n", i18n.T("当前设置"), conf.EndPause)
+	fmt.Print(i18n.T("结束等待说明"))
+	confirmInput, _ = reader.ReadString('\n')
+	confirmInput = strings.TrimSpace(strings.ToLower(confirmInput))
+	if confirmInput == "n" {
+		conf.EndPause = false
+		fmt.Println("-> " + i18n.T("结束等待关"))
+	} else {
+		conf.EndPause = true
+		fmt.Println("-> " + i18n.T("结束等待开"))
+	}
+
+	fmt.Println(outLine)
 	configPath := getConfigPath()
 	if err := SaveConfig(conf, configPath); err != nil {
 		fmt.Println(i18n.T("保存配置失败", configPath, err))
 	} else {
 		fmt.Println(i18n.T("保存配置成功") + configPath)
 	}
-	fmt.Print(i18n.T("回车退出") + "...")
-	reader.ReadString('\n')
+	if conf.EndPause {
+		EndPause()
+	}
 }

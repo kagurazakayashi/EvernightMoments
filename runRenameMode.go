@@ -128,13 +128,10 @@ func runRenameMode(files []string) {
 			fmt.Println()
 		}
 		fmt.Println(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans)))
-		fmt.Print(i18n.T("回车退出") + "...")
-		reader := bufio.NewReader(os.Stdin)
-		reader.ReadString('\n')
 	} else {
-		fmt.Println(i18n.T("取消"))
-		fmt.Print(i18n.T("回车退出") + "...")
-		reader := bufio.NewReader(os.Stdin)
-		reader.ReadString('\n')
+		fmt.Println(i18n.T("取消") + "...")
+	}
+	if conf.EndPause {
+		EndPause()
 	}
 }

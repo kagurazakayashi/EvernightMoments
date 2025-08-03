@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"os"
 )
 
@@ -16,4 +18,10 @@ func main() {
 		return
 	}
 	runRenameMode(args)
+}
+
+func EndPause() {
+	fmt.Print(i18n.T("回车退出") + "...")
+	reader := bufio.NewReader(os.Stdin)
+	reader.ReadString('\n')
 }
