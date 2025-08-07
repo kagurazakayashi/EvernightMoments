@@ -15,6 +15,7 @@ func Language_en() {
 		"要配置格式":     "To configure the renaming format, please run directly without arguments",
 		"可用变量":      "Available Variables:\n  YYYY/YY: Year, MM/M: Month, DD/D: Day\n  HH/H: Hour, mm/m: Minute, ss/s: Second\n  ##: Number (with leading zeros), #: Number (without leading zeros)\n  *: Original filename\n  Number of letters represents digits, e.g., YY for 2025 is 25, M for January is 1, MM is 01",
 		"默认格式例":     "  For example, the default format `%s` will output `%s`.\nPlease enter a new filename naming format and press Enter, or leave blank to keep current settings.\n> ",
+		"示例输出":      "Example output",
 		"格式已设定":     "Format has been set to",
 		"询问预览":      "Enable preview confirmation before renaming?",
 		"当前设置":      "Current Settings",

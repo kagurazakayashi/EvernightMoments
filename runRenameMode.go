@@ -23,6 +23,7 @@ func runRenameMode(files []string) {
 	conf := LoadConfig()
 	var plans []RenamePlan
 	counter := 1
+	i18n.SetLanguage(conf.Language)
 	fmt.Println(outLine)
 	fmt.Println(i18n.T("当前格式") + ": " + conf.Format)
 	fmt.Println(i18n.T("要配置格式") + " " + evernightMoments)
@@ -129,7 +130,7 @@ func runRenameMode(files []string) {
 		}
 		fmt.Println(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans)))
 	} else {
-		fmt.Println(i18n.T("取消") + "...")
+		fmt.Println(i18n.T("取消"))
 	}
 	if conf.EndPause {
 		EndPause()
