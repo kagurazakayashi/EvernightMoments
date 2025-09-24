@@ -1,4 +1,5 @@
 setlocal enabledelayedexpansion
+go generate
 go build -gcflags="all=-N -l" -v -o ./TestPhotos/EvernightMoments.exe
 CD TestPhotos
 SET "file_list="
