@@ -19,11 +19,11 @@
         "FileSubType": "00"
     },
     "StringFileInfo": {
-        "Comments": "EvernightMoments is a utility that renames your visual archives by extracting original capture timestamps.",
+        "Comments": "EvernightMoments is a utility that automatically renames your visual archives by extracting original capture timestamps.",
         "CompanyName": "Kagurazaka Yashi",
-        "FileDescription": "EvernightMoments is a utility that renames your visual archives by extracting original capture timestamps.",
+        "FileDescription": "EvernightMoments is a utility that automatically renames your visual archives by extracting original capture timestamps.",
         "FileVersion": "1.0.0.0",
-        "InternalName": "mqtt-test-server",
+        "InternalName": "moe.yashi.evernightmoments",
         "LegalCopyright": "2026, Kagurazaka Yashi.",
         "LegalTrademarks": "Kagurazaka Yashi",
         "OriginalFilename": "main.exe",
