@@ -51,14 +51,30 @@ func runConfigMode() {
 	fmt.Println(i18n.T("可用变量"))
 	exampleName := GenerateNewName(defaultFormat, time.Now(), "Photo.jpg", 1)
 	fmt.Print(i18n.T("默认格式例", defaultFormat, exampleName))
-	formatInput, _ := reader.ReadString('\n')
-	formatInput = strings.TrimSpace(formatInput)
-	if formatInput == "" {
-		formatInput = conf.Format
+
+	var formatInput string
+	for {
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)
+
+		if input == "" {
+			formatInput = conf.Format
+			break
+		}
+
+		hasInvalid, char := containsInvalidChars(input)
+		if hasInvalid {
+			fmt.Println(i18n.T("非法字符格式", char))
+			fmt.Println(i18n.T("非法字符"))
+			fmt.Print(i18n.T("重新输入") + " > ")
+			continue
+		}
+
+		formatInput = input
+		break
 	}
 	conf.Format = formatInput
 	fmt.Printf("-> "+i18n.T("格式已设定")+": %s\n", conf.Format)
-	exampleName = GenerateNewName(conf.Format, time.Now(), "Photo.jpg", 1)
 	fmt.Printf("-> "+i18n.T("示例输出")+": %s\n", exampleName)
 
 	fmt.Println(outLine)
@@ -99,4 +115,14 @@ func runConfigMode() {
 	if conf.EndPause {
 		EndPause()
 	}
+}
+
+func containsInvalidChars(s string) (bool, string) {
+	invalidChars := "\\/:*?\"<>|"
+	for _, char := range s {
+		if strings.ContainsRune(invalidChars, char) {
+			return true, string(char)
+		}
+	}
+	return false, ""
 }
