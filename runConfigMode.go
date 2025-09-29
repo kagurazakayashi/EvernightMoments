@@ -62,7 +62,7 @@ func runConfigMode() {
 			break
 		}
 
-		hasInvalid, char := containsInvalidChars(input)
+		hasInvalid, char := ContainsInvalidChars(input)
 		if hasInvalid {
 			fmt.Println(i18n.T("非法字符格式", char))
 			fmt.Println(i18n.T("非法字符"))
@@ -117,7 +117,7 @@ func runConfigMode() {
 	}
 }
 
-func containsInvalidChars(s string) (bool, string) {
+func ContainsInvalidChars(s string) (bool, string) {
 	invalidChars := "\\/:*?\"<>|"
 	for _, char := range s {
 		if strings.ContainsRune(invalidChars, char) {

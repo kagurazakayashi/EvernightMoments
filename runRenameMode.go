@@ -59,7 +59,7 @@ func runRenameMode(files []string) {
 		rawTimeStr := t.Format("2006-01-02 15:04:05")
 		newName := GenerateNewName(conf.Format, t, path, counter)
 
-		if isInvalid, char := containsInvalidChars(newName); isInvalid {
+		if isInvalid, char := ContainsInvalidChars(newName); isInvalid {
 			fmt.Println(i18n.T("非法字符格式", char))
 			fmt.Println(i18n.T("非法字符"))
 			return

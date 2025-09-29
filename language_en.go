@@ -13,7 +13,7 @@ func Language_en() {
 		"配置文件名命名格式": "Config File Naming Format",
 		"当前格式":      "Current renaming format is",
 		"要配置格式":     "To configure the renaming format, please run directly without arguments",
-		"可用变量":      "Available Variables:\n  YYYY/YY: Year, MM/M: Month, DD/D: Day\n  HH/H: Hour, mm/m: Minute, ss/s: Second\n  ##: Number (with leading zeros), #: Number (without leading zeros)\n  *: Original filename\n  Number of letters represents digits, e.g., YY for 2025 is 25, M for January is 1, MM is 01",
+		"可用变量":      "Available Variables:\n  <YYYY>/<YY>: Year, <MM>/<M>: Month, <DD>/<D>: Day\n  <HH>/<H>: Hour, <mm>/<m>: Minute, <ss>/<s>: Second\n  <##>: Number (with leading zeros), <#>: Number (without leading zeros)\n  <*>: Original filename\n  Number of letters represents digits, e.g., <YY> for 2025 is 25, <M> for January is 1, <MM> is 01",
 		"默认格式例":     "For example, the default format `%s` will output `%s`.\nPlease enter a new filename naming format and press Enter, or leave blank to keep current settings.\n> ",
 		"示例输出":      "Example output",
 		"格式已设定":     "Format has been set to",
@@ -49,7 +49,7 @@ func Language_en() {
 		"处理结果":      "\nProcessing complete! Success: %d, Failed: %d, Total: %d",
 		"取消":        "Operation cancelled.",
 		"非法字符格式":    "The character '%s' is not allowed in this format.",
-		"非法字符":      "File or folder names cannot include any of the following characters: \\ / : * ? \" < > | ",
+		"非法字符":      "1. File or folder names cannot include any of the following characters: \\ / : ? ' \" < * > | \n2. The full name of the file or folder cannot be: NUL, COM1 ~ COM9, LPT1 ~ LPT9\n3. The last character cannot be '.' .",
 		"重新输入":      "Please try again",
 	})
 }

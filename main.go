@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-const defaultFormat = "YYYYMMDD_HHmmss_*"
+const defaultFormat = "<YYYY><MM><DD>_<HH><mm><ss>_<*>"
 const outLine = "--------------------------------"
 const evernightMoments = "EvernightMoments"
 const evernightMomentsVersion = "1.0.0"
