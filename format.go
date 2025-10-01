@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var reservedNames = make(map[string]bool)
+
 // GenerateNewName 根據格式字串生成新檔名
 // format: 使用者定義的格式，例如 "<YYYY>-<MM>-<DD>_image_<#>"
 // t: 照片時間
@@ -49,4 +51,39 @@ func GenerateNewName(format string, t time.Time, originalPath string, index int)
 
 	// 拼接副檔名
 	return result + ext
+}
+
+func InitInvalidChars() {
+	base := []string{"CON", "PRN", "AUX", "NUL"}
+	for _, n := range base {
+		reservedNames[n] = true
+	}
+	for i := 1; i <= 9; i++ {
+		reservedNames[fmt.Sprintf("COM%d", i)] = true
+		reservedNames[fmt.Sprintf("LPT%d", i)] = true
+	}
+}
+
+func ContainsInvalidChars(s string) (bool, string) {
+	if s == "" {
+		return false, ""
+	}
+
+	invalidChars := "\\/:?\"|*<>"
+	for _, char := range s {
+		if strings.ContainsRune(invalidChars, char) {
+			return true, string(char)
+		}
+	}
+
+	if strings.HasSuffix(s, ".") {
+		return true, "."
+	}
+
+	upperS := strings.ToUpper(s)
+	if reservedNames[upperS] {
+		return true, s
+	}
+
+	return false, ""
 }

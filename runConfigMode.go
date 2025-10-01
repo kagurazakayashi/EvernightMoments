@@ -116,13 +116,3 @@ func runConfigMode() {
 		EndPause()
 	}
 }
-
-func ContainsInvalidChars(s string) (bool, string) {
-	invalidChars := "\\/:*?\"<>|"
-	for _, char := range s {
-		if strings.ContainsRune(invalidChars, char) {
-			return true, string(char)
-		}
-	}
-	return false, ""
-}
