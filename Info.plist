@@ -9,9 +9,9 @@
     <key>CFBundleIdentifier</key>
     <string>moe.yashi.evernightmoments</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>1.1.0</string>
     <key>CFBundleVersion</key>
-    <string>155</string>
+    <string>110</string>
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>LSUIElement</key>

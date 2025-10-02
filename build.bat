@@ -1,6 +1,6 @@
 SET NAME=EvernightMoments
 SET PNAME=EvernightMoments
-SET VERSION=1.0.0
+SET VERSION=1.1.0
 RD /S /Q bin
 MD bin
 COPY README.md bin\

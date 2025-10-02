@@ -12,7 +12,7 @@ import (
 const defaultFormat = "<YYYY><MM><DD>_<HH><mm><ss>_<*>"
 const outLine = "--------------------------------"
 const evernightMoments = "EvernightMoments"
-const evernightMomentsVersion = "1.0.0"
+const evernightMomentsVersion = "1.1.0"
 
 func main() {
 	args := os.Args[1:]

@@ -2,118 +2,141 @@
 
 # [EvernightMoments](https://github.com/kagurazakayashi/EvernightMoments)
 
-**予瞬息以永恒，于长夜留余温。**
-EvernightMoments 是一款通过提取照片原始拍摄时间，为您自动重命名影像文件的工具。
+**English** | [简体中文](README.zh-Hans.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md)
 
-## 下载
+**Bestowing eternity upon the fleeting, and warmth to the everlasting night.**
+EvernightMoments is a utility that automatically renames your visual archives by extracting original capture timestamps.
 
-最新版本: v1.0.0 (go 1.26.0)
+## Download
 
-前往 [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) 下载最新版本。
+Latest Version: v1.1.0 (go 1.26.0)
 
-| 操作系统 |    处理器     | 位数 | 软件压缩包名称                    |
-| :------: | :-----------: | :--: | --------------------------------- |
-| windows  | Intel/AMD x86 |  32  | EvernightMoments_windows-x86.7z   |
-| windows  | Intel/AMD x86 |  64  | EvernightMoments_windows-x64.7z   |
-| windows  |      ARM      |  64  | EvernightMoments_windows-arm64.7z |
-|  macOS   |   Intel x86   |  64  | EvernightMoments_macos-x64.7z     |
-|  macOS   | Apple silicon |  64  | EvernightMoments_macos-arm64.7z   |
-|  Linux   | Intel/AMD x86 |  32  | EvernightMoments_linux-x86.7z     |
-|  Linux   | Intel/AMD x86 |  64  | EvernightMoments_linux-x64.7z     |
-|  Linux   |      ARM      |  32  | EvernightMoments_linux-arm32.7z   |
-|  Linux   |      ARM      |  64  | EvernightMoments_linux-arm64.7z   |
+Go to [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) to download the latest version.
 
-## 使用方法
+|   OS    |   Processor   | Arch | Package Name                      |
+| :-----: | :-----------: | :--: | --------------------------------- |
+| Windows | Intel/AMD x86 |  32  | EvernightMoments_windows-x86.7z   |
+| Windows | Intel/AMD x86 |  64  | EvernightMoments_windows-x64.7z   |
+| Windows |      ARM      |  64  | EvernightMoments_windows-arm64.7z |
+|  macOS  |   Intel x86   |  64  | EvernightMoments_macos-x64.7z     |
+|  macOS  | Apple Silicon |  64  | EvernightMoments_macos-arm64.7z   |
+|  Linux  | Intel/AMD x86 |  32  | EvernightMoments_linux-x86.7z     |
+|  Linux  | Intel/AMD x86 |  64  | EvernightMoments_linux-x64.7z     |
+|  Linux  |      ARM      |  32  | EvernightMoments_linux-arm32.7z   |
+|  Linux  |      ARM      |  64  | EvernightMoments_linux-arm64.7z   |
 
-### 快速开始
+## Usage
 
-#### 通用命令
+### Quick Start
 
-`[程序可执行文件名] [照片文件路径1] [照片文件路径2] ...`
+#### General Commands
 
-- 程序可执行文件名:
-  - `Windows Command Prompt` 中类似于 `EvernightMoments.exe`
-  - `Windows PowerShell` 中类似于 `.\EvernightMoments.exe`
-  - macOS / Linux `sh` 中类似于 `./EvernightMoments`
-- 照片文件路径:
-  - 支持 **多个文件** ，例如 `EvernightMoments.exe "C:\album1\photo1.arw" "C:\album1\photo2.arw"`
-  - 支持 **多个文件夹** ，例如 `EvernightMoments.exe "C:\album1" "C:\album2"`
-    - 如果指定的是一个文件夹，将尝试重命名该文件夹中的 **所有文件** 。
-    - 默认不会修改子文件夹中的文件，如果需要同时修改子文件夹中的文件，请添加参数 `-r` 。
+`[executable_name] [photo_path1] [photo_path2] ...`
 
-#### 在 Windows 的图形画面中使用
+- **Executable name**:
+  - In `Windows Command Prompt`: e.g., `EvernightMoments.exe`
+  - In `Windows PowerShell`: e.g., `.\EvernightMoments.exe`
+  - In macOS / Linux `sh`: e.g., `./EvernightMoments`
+- **Photo file paths**:
+  - Supports **multiple files**: e.g., `EvernightMoments.exe "C:\album1\photo1.arw" "C:\album1\photo2.arw"`
+  - Supports **multiple folders**: e.g., `EvernightMoments.exe "C:\album1" "C:\album2"`
+    - If a folder is specified, the tool will attempt to rename **all files** within that folder.
+    - By default, subfolders are not modified. To include subfolders, add the `-r` parameter.
 
-- 在“文件资源管理器”中，可以将一个或多个 **照片文件** 或者 **内部只有照片的文件夹** 直接拖拽到这个 .exe 文件上，开始重命名操作。
-- 你还可以将程序放到“发送到”菜单里面，可以随时通过在照片上点右键中的“发送到”菜单来使用本程序。
-  - 按 `Windows+R` 快捷键打开“运行”对话框，然后输入 `shell:sendto` 并回车，将程序复制到新打开的文件夹窗口中。
-  - 然后选中一个或多个 **照片文件** 或者 **内部只有照片的文件夹** 并点按鼠标右键，显示完整右键菜单，找到“发送到”菜单项，可以看到本程序。
+#### Using Graphical Interface (Windows)
 
-### 软件配置
+- In **File Explorer**, you can directly drag and drop one or more **photo files** or **folders containing photos** onto the `.exe` file to start the renaming process.
+- You can also add the program to the **"Send to"** menu for quick access via the right-click menu:
+  - Press `Windows+R` to open the "Run" dialog, type `shell:sendto`, and press Enter. Copy the program into the folder that opens.
+  - Select one or more photos/folders, right-click, find the "Send to" menu, and select this program.
 
-如果需要更改 语言、文件重命名的格式、交互询问开关 等，请先进行软件配置：
+### Software Configuration
 
-**不带参数** 直接运行 `./EvernightMoments` (或者在 Windows 中直接双击 .exe )，将会进入配置模式。
+To change the language, filename format, or interactive prompts, enter the configuration mode:
 
-根据提示信息，回答每个问题并回车。
-你可以进行以下设置：
+Run `./EvernightMoments` (or double-click the `.exe` in Windows) **without any parameters**.
 
-#### 1. 语言设置
+Follow the prompts and press Enter after each answer. You can configure the following:
 
-- 首先将会让你选择显示的语言，输入序号并回车即可。
-- 设置被最终保存后，下次再进入设置时此处直接按回车跳过即可。
+#### 1. Language Settings
 
-#### 2. 配置文件重命名的格式
+- Select your preferred display language by entering its corresponding number.
+- Once saved, you can press Enter to skip this step in the future.
 
-- 你可以看到当前的文件重命名的格式，如果没有问题，可以直接留空并回车，将跳过修改。
-- 如果需要修改，请输入新的格式。在格式中，可以使用以下代码代指重命名时的信息。
-- 注意：区分大小写。
-- **注意：不要输入系统不支持的符号！** 包括以下符号: `\ / : ? ' " | < * >`
-  - 其中 Windows 中最终命名结果不能为 `CON, PRN, AUX, NUL, COM1~COM9, LPT1~LPT9`, 文件名结尾不能是 `.`
-  - 使用系统不支持的符号可能导致重命名失败甚至损坏其他文件或文件系统。
+#### 2. Filename Format
 
-| 代码     |    输出示例 | 含义         |
-| :------- | ----------: | ------------ |
-| `<YY>`   |        `25` | 两位年份     |
-| `<YYYY>` |      `2025` | 完整年份     |
-| `<M>`    |         `5` | 月份         |
-| `<MM>`   |        `05` | 两位月份     |
-| `<D>`    |         `2` | 日           |
-| `<DD>`   |        `02` | 两位日       |
-| `<H>`    |         `9` | 小时         |
-| `<HH>`   |        `09` | 两位小时     |
-| `<m>`    |         `7` | 分钟         |
-| `<mm>`   |        `07` | 两位分钟     |
-| `<s>`    |         `3` | 秒           |
-| `<ss>`   |        `03` | 两位秒       |
-| `<#>`    |         `1` | 编号         |
-| `<##>`   |        `01` | 统一位数编号 |
-| `<*>`    | `photo.jpg` | 原始文件名   |
+- You will see the current renaming format. Press Enter to keep it, or type a new format.
+- Use the following **placeholders** (Case-sensitive):
 
-注意，不支持 `<hh>` (12 小时格式)
+| Placeholder | Example Output | Meaning             |
+| :---------- | -------------: | ------------------- |
+| `<YY>`      |           `25` | 2-digit Year        |
+| `<YYYY>`    |         `2025` | 4-digit Year        |
+| `<M>`       |            `5` | Month               |
+| `<MM>`      |           `05` | 2-digit Month       |
+| `<D>`       |            `2` | Day                 |
+| `<DD>`      |           `02` | 2-digit Day         |
+| `<H>`       |            `9` | Hour                |
+| `<HH>`      |           `09` | 2-digit Hour        |
+| `<m>`       |            `7` | Minute              |
+| `<mm>`      |           `07` | 2-digit Minute      |
+| `<s>`       |            `3` | Second              |
+| `<ss>`      |           `03` | 2-digit Second      |
+| `<#>`       |            `1` | Index Number        |
+| `<##>`      |           `01` | Padded Index Number |
+| `<*>`       |    `photo.jpg` | Original Filename   |
 
-示例：原始文件名为 `photo.jpg` 时，采用默认值格式 `<YYYY><MM><DD>_<HH><mm><ss>_<*>` ，将会输出 `20260220_122937_Photo.jpg` 。
+##### Important Notes
 
-更多示例：
+1. **Do not use illegal characters!** Prohibited symbols include: `\ / : ? ' " | < * >`
+   - In Windows, filenames cannot be reserved names like `CON`, `PRN`, `AUX`, etc., and cannot end with a period `.`.
+2. `<hh>` (12-hour format) is **not supported**.
 
-- `<YYYY><MM><DD>_<HH><mm><ss>*` -> `20250502_090703Photo.jpg`
-- `<YY>年<M>月<D>日—*` -> `25年5月2日-Photo.jpg`
-- `<YYYY>-<MM>-<DD>_<HH>-<mm>-<ss>_<*>` -> `2025-05-02_09-07-03_Photo.jpg`
-- `<MM>-<DD>-<YYYY>_<HH>-<mm>-<ss>_<*>` -> `05-02-2025_09-07-03_Photo.jpg`
-- `<DD>.<MM>.<YYYY>_<HH>.<mm>.<ss>_<*>` -> `02.05.2025_09.07.03_Photo.jpg`
+##### Examples
 
-#### 3. 是否在重命名前预览确认？
+With the original filename `photo.jpg`, the default format `<YYYY><MM><DD>_<HH><mm><ss>_<*>` will output `20260220_122937_photo.jpg`.
 
-- 如果开启，会先向你展示会修改成什么样子，让你确认要不要继续。
-- 请输入 `y` 或者 `n`。
-  - 默认值`y`: 每次先询问我。
-  - `n`: 直接开始重命名。
+Additional examples:
 
-#### 4. 在运行结束后，需要提示“按回车键退出”以便停留查看结果吗？
+- `<YYYY><MM><DD>_<HH><mm><ss>*` -> `20250502_090703photo.jpg`
+- `<YY>-<M>-<D>-*` -> `25-5-2-photo.jpg`
+- `<YYYY>-<MM>-<DD>_<HH>-<mm>-<ss>_<*>` -> `2025-05-02_09-07-03_photo.jpg`
 
-- 请输入 `y` 或者 `n`。
-  - 默认值`y`: 结束后等待用户按回车键。
-  - `n`: 结束后直接退出。
+#### 3. Enable Preview Confirmation?
+
+- If enabled, the tool will show a preview of the changes and ask for confirmation before proceeding.
+- Enter `y` (default) to ask every time, or `n` to rename immediately.
+
+#### 4. "Press Enter to Exit" Prompt?
+
+- Decide if the program should wait for a keypress after finishing so you can review the results.
+- Enter `y` (default) to wait, or `n` to exit immediately.
+
+## Build
+
+First, install [Go](https://go.dev/). Version `1.26.0` or higher is required.
+
+### Windows
+
+You can use the following scripts:
+
+- **Build**
+  - `build.bat`: Compiles for various platforms (output in the `bin` folder).
+- **Test**
+  - First, create a `TestPhotos` folder and place some test photo files inside.
+  - `conf.bat`: Builds and enters configuration mode.
+  - `test_dir.bat`: Builds and tests processing the `TestPhotos` folder (includes all files).
+  - `test_files.bat`: Tests multiple file inputs (takes all files from `TestPhotos`).
+
+### All Systems
+
+`cd` into the source code folder and execute:
+
+```bash
+go generate
+go build .
+```
 
 ## LICENSE
 
-Copyright (c) 2026 KagurazakaYashi EvernightMoments is licensed under Mulan PSL v2. You can use this software according to the terms and conditions of the Mulan PSL v2. You may obtain a copy of Mulan PSL v2 at: http://license.coscl.org.cn/MulanPSL2 THIS SOFTWARE IS PROVIDED ON AN “AS IS” BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the Mulan PSL v2 for more details.
+Copyright (c) 2026 KagurazakaYashi. EvernightMoments is licensed under **Mulan PSL v2**. You can use this software according to the terms and conditions of the Mulan PSL v2. You may obtain a copy of Mulan PSL v2 at: http://license.coscl.org.cn/MulanPSL2. THIS SOFTWARE IS PROVIDED ON AN “AS IS” BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the Mulan PSL v2 for more details.
