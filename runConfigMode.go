@@ -75,6 +75,7 @@ func runConfigMode() {
 	}
 	conf.Format = formatInput
 	fmt.Printf("-> "+i18n.T("格式已设定")+": %s\n", conf.Format)
+	exampleName = GenerateNewName(conf.Format, time.Now(), "Photo.jpg", 1)
 	fmt.Printf("-> "+i18n.T("示例输出")+": %s\n", exampleName)
 
 	fmt.Println(outLine)

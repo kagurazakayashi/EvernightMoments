@@ -1,4 +1,2 @@
-go build -gcflags="all=-N -l" -o ./TestPhotos/EvernightMoments.exe
-CD TestPhotos
+go build -gcflags="all=-N -l" -o EvernightMoments.exe
 EvernightMoments.exe
-CD ..

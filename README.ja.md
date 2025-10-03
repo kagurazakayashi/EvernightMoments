@@ -7,21 +7,21 @@ EvernightMoments は、写真の撮影日時を抽出し、ファイル名を自
 
 ## ダウンロード
 
-最新バージョン: v1.1.0 (go 1.26.0)
+最新バージョン: v1.1.0
 
 [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) から最新バージョンをダウンロードしてください。
 
-|   OS    |  プロセッサ   | ビット | ソフトウェアパッケージ名          |
-| :-----: | :-----------: | :----: | --------------------------------- |
-| windows | Intel/AMD x86 |   32   | EvernightMoments_windows-x86.7z   |
-| windows | Intel/AMD x86 |   64   | EvernightMoments_windows-x64.7z   |
-| windows |      ARM      |   64   | EvernightMoments_windows-arm64.7z |
-|  macOS  |   Intel x86   |   64   | EvernightMoments_macos-x64.7z     |
-|  macOS  | Apple silicon |   64   | EvernightMoments_macos-arm64.7z   |
-|  Linux  | Intel/AMD x86 |   32   | EvernightMoments_linux-x86.7z     |
-|  Linux  | Intel/AMD x86 |   64   | EvernightMoments_linux-x64.7z     |
-|  Linux  |      ARM      |   32   | EvernightMoments_linux-arm32.7z   |
-|  Linux  |      ARM      |   64   | EvernightMoments_linux-arm64.7z   |
+|   OS    |  プロセッサ   | ビット | ソフトウェアパッケージ名               |
+| :-----: | :-----------: | :----: | -------------------------------------- |
+| windows | Intel/AMD x86 |   32   | `EvernightMoments_v*_windows-x86.7z`   |
+| windows | Intel/AMD x86 |   64   | `EvernightMoments_v*_windows-x64.7z`   |
+| windows |      ARM      |   64   | `EvernightMoments_v*_windows-arm64.7z` |
+|  macOS  |   Intel x86   |   64   | `EvernightMoments_v*_macos-x64.7z`     |
+|  macOS  | Apple silicon |   64   | `EvernightMoments_v*_macos-arm64.7z`   |
+|  Linux  | Intel/AMD x86 |   32   | `EvernightMoments_v*_linux-x86.7z`     |
+|  Linux  | Intel/AMD x86 |   64   | `EvernightMoments_v*_linux-x64.7z`     |
+|  Linux  |      ARM      |   32   | `EvernightMoments_v*_linux-arm32.7z`   |
+|  Linux  |      ARM      |   64   | `EvernightMoments_v*_linux-arm64.7z`   |
 
 ## 使い方
 

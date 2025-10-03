@@ -69,7 +69,7 @@ func ContainsInvalidChars(s string) (bool, string) {
 		return false, ""
 	}
 
-	invalidChars := "\\/:?\"|*<>"
+	invalidChars := "\\/:?\"|"
 	for _, char := range s {
 		if strings.ContainsRune(invalidChars, char) {
 			return true, string(char)

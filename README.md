@@ -9,21 +9,21 @@ EvernightMoments is a utility that automatically renames your visual archives by
 
 ## Download
 
-Latest Version: v1.1.0 (go 1.26.0)
+Latest Version: v1.1.0
 
 Go to [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) to download the latest version.
 
-|   OS    |   Processor   | Arch | Package Name                      |
-| :-----: | :-----------: | :--: | --------------------------------- |
-| Windows | Intel/AMD x86 |  32  | EvernightMoments_windows-x86.7z   |
-| Windows | Intel/AMD x86 |  64  | EvernightMoments_windows-x64.7z   |
-| Windows |      ARM      |  64  | EvernightMoments_windows-arm64.7z |
-|  macOS  |   Intel x86   |  64  | EvernightMoments_macos-x64.7z     |
-|  macOS  | Apple Silicon |  64  | EvernightMoments_macos-arm64.7z   |
-|  Linux  | Intel/AMD x86 |  32  | EvernightMoments_linux-x86.7z     |
-|  Linux  | Intel/AMD x86 |  64  | EvernightMoments_linux-x64.7z     |
-|  Linux  |      ARM      |  32  | EvernightMoments_linux-arm32.7z   |
-|  Linux  |      ARM      |  64  | EvernightMoments_linux-arm64.7z   |
+|   OS    |   Processor   | Arch | Package Name                           |
+| :-----: | :-----------: | :--: | -------------------------------------- |
+| Windows | Intel/AMD x86 |  32  | `EvernightMoments_v*_windows-x86.7z`   |
+| Windows | Intel/AMD x86 |  64  | `EvernightMoments_v*_windows-x64.7z`   |
+| Windows |      ARM      |  64  | `EvernightMoments_v*_windows-arm64.7z` |
+|  macOS  |   Intel x86   |  64  | `EvernightMoments_v*_macos-x64.7z`     |
+|  macOS  | Apple Silicon |  64  | `EvernightMoments_v*_macos-arm64.7z`   |
+|  Linux  | Intel/AMD x86 |  32  | `EvernightMoments_v*_linux-x86.7z`     |
+|  Linux  | Intel/AMD x86 |  64  | `EvernightMoments_v*_linux-x64.7z`     |
+|  Linux  |      ARM      |  32  | `EvernightMoments_v*_linux-arm32.7z`   |
+|  Linux  |      ARM      |  64  | `EvernightMoments_v*_linux-arm64.7z`   |
 
 ## Usage
 
