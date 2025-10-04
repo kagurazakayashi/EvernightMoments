@@ -98,9 +98,12 @@ With the original filename `photo.jpg`, the default format `<YYYY><MM><DD>_<HH><
 
 Additional examples:
 
-- `<YYYY><MM><DD>_<HH><mm><ss>*` -> `20250502_090703photo.jpg`
-- `<YY>-<M>-<D>-*` -> `25-5-2-photo.jpg`
-- `<YYYY>-<MM>-<DD>_<HH>-<mm>-<ss>_<*>` -> `2025-05-02_09-07-03_photo.jpg`
+- `<YYYY><MM><DD>_<HH><mm><ss>*` -> `20250502_090703Photo.jpg`
+- `<*>_<HH><mm><ss>` -> `Photo_193030.jpg`
+- `<YY>年<M>月<D>日—*` -> `25年5月2日-Photo.jpg`
+- `<YYYY>-<MM>-<DD>_<HH>-<mm>-<ss>_<*>` -> `2025-05-02_09-07-03_Photo.jpg`
+- `<MM>-<DD>-<YYYY>_<HH>-<mm>-<ss>_<*>` -> `05-02-2025_09-07-03_Photo.jpg`
+- `<DD>.<MM>.<YYYY>_<HH>.<mm>.<ss>_<*>` -> `02.05.2025_09.07.03_Photo.jpg`
 
 #### 3. Enable Preview Confirmation?
 
@@ -127,6 +130,7 @@ You can use the following scripts:
   - `conf.bat`: Builds and enters configuration mode.
   - `test_dir.bat`: Builds and tests processing the `TestPhotos` folder (includes all files).
   - `test_files.bat`: Tests multiple file inputs (takes all files from `TestPhotos`).
+  - If you renamed the photos in the `TestPhotos` folder using the default format during testing, you can run `python test_undo.py` to undo the renaming.
 
 ### All Systems
 

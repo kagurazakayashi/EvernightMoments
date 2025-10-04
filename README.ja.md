@@ -100,8 +100,11 @@ EvernightMoments は、写真の撮影日時を抽出し、ファイル名を自
 その他の例：
 
 - `<YYYY><MM><DD>_<HH><mm><ss>*` -> `20250502_090703Photo.jpg`
+- `<*>_<HH><mm><ss>` -> `Photo_193030.jpg`
 - `<YY>年<M>月<D>日—*` -> `25年5月2日-Photo.jpg`
 - `<YYYY>-<MM>-<DD>_<HH>-<mm>-<ss>_<*>` -> `2025-05-02_09-07-03_Photo.jpg`
+- `<MM>-<DD>-<YYYY>_<HH>-<mm>-<ss>_<*>` -> `05-02-2025_09-07-03_Photo.jpg`
+- `<DD>.<MM>.<YYYY>_<HH>.<mm>.<ss>_<*>` -> `02.05.2025_09.07.03_Photo.jpg`
 
 #### 3. リネーム前にプレビュー確認しますか？
 
@@ -132,6 +135,7 @@ EvernightMoments は、写真の撮影日時を抽出し、ファイル名を自
   - `conf.bat`: ビルドして設定モードに入ります。
   - `test_dir.bat`: ビルドして `TestPhotos` フォルダ（全ファイルを含む）の処理をテストします。
   - `test_files.bat`: 複数のファイル入力（`TestPhotos` 内の全ファイルを対象）をテストします。
+  - テスト時にデフォルトの形式で `TestPhotos` フォルダ内の写真をリネームした場合は、`python test_undo.py` を実行してリネームを取り消すことができます。
 
 ### すべてのシステム
 

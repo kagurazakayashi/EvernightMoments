@@ -102,6 +102,7 @@ EvernightMoments 是一款通过提取照片原始拍摄时间，为您自动重
 更多示例：
 
 - `<YYYY><MM><DD>_<HH><mm><ss>*` -> `20250502_090703Photo.jpg`
+- `<*>_<HH><mm><ss>` -> `Photo_193030.jpg`
 - `<YY>年<M>月<D>日—*` -> `25年5月2日-Photo.jpg`
 - `<YYYY>-<MM>-<DD>_<HH>-<mm>-<ss>_<*>` -> `2025-05-02_09-07-03_Photo.jpg`
 - `<MM>-<DD>-<YYYY>_<HH>-<mm>-<ss>_<*>` -> `05-02-2025_09-07-03_Photo.jpg`
@@ -135,6 +136,7 @@ EvernightMoments 是一款通过提取照片原始拍摄时间，为您自动重
   - `conf.bat`: 编译并进入配置模式。
   - `test_dir.bat`: 编译并测试处理 `TestPhotos` 文件夹（包括所有文件）。
   - `test_files.bat`: 测试多个文件输入（取自 `TestPhotos` 中的所有文件）。
+  - 如果测试时使用了默认格式对 `TestPhotos` 文件夹中的照片进行了重命名，可以执行 `python test_undo.py` 撤销重命名。
 
 ### 所有系统下
 

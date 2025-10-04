@@ -7,68 +7,89 @@ import (
 	"time"
 )
 
+// reservedNames 儲存作業系統（主要是 Windows）限制使用的保留檔案名稱
 var reservedNames = make(map[string]bool)
 
-// GenerateNewName 根據格式字串生成新檔名
-// format: 使用者定義的格式，例如 "<YYYY>-<MM>-<DD>_image_<#>"
-// t: 照片時間
-// originalPath: 原始檔案路徑
-// index: 當前處理的檔案序號
+// GenerateNewName 根據使用者定義的格式字串與檔案資訊，生成新的檔案名稱
+// 參數說明：
+//
+//	format: 格式字串，例如 "<YYYY>-<MM>-<DD>_image_<#>"
+//	t: 用於命名的時間基準（通常為照片拍攝時間）
+//	originalPath: 原始檔案的完整路徑
+//	index: 當前處理的檔案序號，用於 <#> 標籤
+//
+// 回傳值：
+//
+//	結合格式化後的名稱與原始副檔名的新檔名
 func GenerateNewName(format string, t time.Time, originalPath string, index int) string {
+	// 取得原始檔名（含副檔名）
 	originalName := filepath.Base(originalPath)
+	// 取得副檔名（例如 .jpg）
 	ext := filepath.Ext(originalName)
+	// 取得不含副檔名的原始名稱
 	nameWithoutExt := strings.TrimSuffix(originalName, ext)
 
-	// 定義替換對映，所有關鍵字都加上了 <>
-	// 建議順序：長標籤放在短標籤前面（例如 <YYYY> 在 <YY> 前），防止誤匹配
+	// 定義替換對映清單，將格式標籤映射至實際數值
+	// 注意：長標籤（如 <YYYY>）必須排在短標籤（如 <YY>）前面，以避免部分匹配導致錯誤
 	replacements := []struct {
 		old string
 		new string
 	}{
-		{"<YYYY>", fmt.Sprintf("%04d", t.Year())},
-		{"<YY>", fmt.Sprintf("%02d", t.Year()%100)},
-		{"<MM>", fmt.Sprintf("%02d", t.Month())},
-		{"<M>", fmt.Sprintf("%d", t.Month())},
-		{"<DD>", fmt.Sprintf("%02d", t.Day())},
-		{"<D>", fmt.Sprintf("%d", t.Day())},
-		{"<HH>", fmt.Sprintf("%02d", t.Hour())},
-		{"<H>", fmt.Sprintf("%d", t.Hour())},
-		{"<mm>", fmt.Sprintf("%02d", t.Minute())},
-		{"<m>", fmt.Sprintf("%d", t.Minute())},
-		{"<ss>", fmt.Sprintf("%02d", t.Second())},
-		{"<s>", fmt.Sprintf("%d", t.Second())},
-		{"<##>", fmt.Sprintf("%02d", index)},
-		{"<#>", fmt.Sprintf("%d", index)},
-		{"<*>", nameWithoutExt},
+		{"<YYYY>", fmt.Sprintf("%04d", t.Year())},   // 四位數年份
+		{"<YY>", fmt.Sprintf("%02d", t.Year()%100)}, // 兩位數年份
+		{"<MM>", fmt.Sprintf("%02d", t.Month())},    // 兩位數月份
+		{"<M>", fmt.Sprintf("%d", t.Month())},       // 單/雙位數月份
+		{"<DD>", fmt.Sprintf("%02d", t.Day())},      // 兩位數日期
+		{"<D>", fmt.Sprintf("%d", t.Day())},         // 單/雙位數日期
+		{"<HH>", fmt.Sprintf("%02d", t.Hour())},     // 兩位數小時（24小時制）
+		{"<H>", fmt.Sprintf("%d", t.Hour())},        // 單/雙位數小時
+		{"<mm>", fmt.Sprintf("%02d", t.Minute())},   // 兩位數分鐘
+		{"<m>", fmt.Sprintf("%d", t.Minute())},      // 單/雙位數分鐘
+		{"<ss>", fmt.Sprintf("%02d", t.Second())},   // 兩位數秒數
+		{"<s>", fmt.Sprintf("%d", t.Second())},      // 單/雙位數秒數
+		{"<##>", fmt.Sprintf("%02d", index)},        // 兩位數序號（不足補零）
+		{"<#>", fmt.Sprintf("%d", index)},           // 原始序號
+		{"<*>", nameWithoutExt},                     // 原始檔名（不含副檔名）
 	}
 
 	result := format
 
-	// 執行替換
+	// 依序執行字串替換
 	for _, r := range replacements {
 		result = strings.ReplaceAll(result, r.old, r.new)
 	}
 
-	// 拼接副檔名
+	// 重新拼接副檔名並回傳
 	return result + ext
 }
 
+// InitInvalidChars 初始化保留名稱清單
+// 這些名稱在 Windows 系統中具有特殊用途（如設備名稱），不能作為一般檔案名稱使用
 func InitInvalidChars() {
+	// 基本保留名稱
 	base := []string{"CON", "PRN", "AUX", "NUL"}
 	for _, n := range base {
 		reservedNames[n] = true
 	}
+	// 通訊埠與印表機連接埠相關保留名稱（COM1-9, LPT1-9）
 	for i := 1; i <= 9; i++ {
 		reservedNames[fmt.Sprintf("COM%d", i)] = true
 		reservedNames[fmt.Sprintf("LPT%d", i)] = true
 	}
 }
 
+// ContainsInvalidChars 檢查字串是否包含檔案系統不允許的非法字元或保留名稱
+// 回傳值：
+//
+//	bool: 是否包含非法內容
+//	string: 觸發錯誤的字元或名稱
 func ContainsInvalidChars(s string) (bool, string) {
+	// 空字串不視為非法（由其他邏輯判斷是否必填）
 	if s == "" {
 		return false, ""
 	}
 
+	// Windows 系統禁用的字元
 	invalidChars := "\\/:?\"|"
 	for _, char := range s {
 		if strings.ContainsRune(invalidChars, char) {
@@ -76,14 +97,17 @@ func ContainsInvalidChars(s string) (bool, string) {
 		}
 	}
 
+	// 檔案名稱末尾不可為句點
 	if strings.HasSuffix(s, ".") {
 		return true, "."
 	}
 
+	// 轉換為大寫以進行保留名稱比對（不分大小寫）
 	upperS := strings.ToUpper(s)
 	if reservedNames[upperS] {
 		return true, s
 	}
 
+	// 通過所有檢查，回傳合法
 	return false, ""
 }
