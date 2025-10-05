@@ -1,7 +1,9 @@
 bin
 sbin
 TestPhotos/*
+/EvernightMoments
 EvernightMoments.json
+/EvernightMoments.png
 *.syso
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,go,goland
