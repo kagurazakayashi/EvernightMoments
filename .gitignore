@@ -4,6 +4,8 @@ TestPhotos/*
 /EvernightMoments
 EvernightMoments.json
 /EvernightMoments.png
+/EvernightMoments.icns
+*.dmg
 *.syso
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,go,goland

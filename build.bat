@@ -30,29 +30,21 @@ COPY README.md bin\%PNAME%_windows-arm64\
 DEL /Q *.syso
 SET GOOS=darwin
 
-MD bin\%NAME%.app
-MD bin\%NAME%.app\Contents
-COPY Info.plist bin\%NAME%.app\Contents
-MD bin\%NAME%.app\Contents\Resources
-COPY ico\icon.icns bin\%NAME%.app\Contents\Resources
-MD bin\%NAME%.app\Contents\MacOS
-MD bin\%PNAME%_macos-x64
-XCOPY bin\%NAME%.app bin\%PNAME%_macos-x64\%NAME%.app /E /I
-MD bin\%PNAME%_macos-arm64
-XCOPY bin\%NAME%.app bin\%PNAME%_macos-arm64\%NAME%.app /E /I
-RD /S /Q bin\%NAME%.app
-
 ECHO Compiling macOS x64
 SET GOARCH=amd64
 go build -o bin\%PNAME%_macos-x64\%NAME%
 COPY README.md bin\%PNAME%_macos-x64\
-COPY bin\%PNAME%_macos-x64\%NAME% bin\%PNAME%_macos-x64\%NAME%.app\Contents\MacOS\
+COPY ico\icon.icns bin\%PNAME%_macos-x64\%NAME%.icns
+COPY install-mac.sh bin\%PNAME%_macos-x64\
+COPY uninstall-mac.sh bin\%PNAME%_macos-x64\
 
 ECHO Compiling macOS ARM64
 SET GOARCH=arm64
 go build -o bin\%PNAME%_macos-arm64\%NAME%
 COPY README.md bin\%PNAME%_macos-arm64\
-COPY bin\%PNAME%_macos-arm64\%NAME% bin\%PNAME%_macos-arm64\%NAME%.app\Contents\MacOS\
+COPY ico\icon.icns bin\%PNAME%_macos-arm64\%NAME%.icns
+COPY install-mac.sh bin\%PNAME%_macos-arm64\
+COPY uninstall-mac.sh bin\%PNAME%_macos-arm64\
 
 SET GOOS=linux
 
