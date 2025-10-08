@@ -1,38 +1,100 @@
 #!/bin/bash
 
-# --- Configuration ---
+# ==============================================================================
+# CONFIGURATION
+# ==============================================================================
 APP_NAME="EvernightMoments"
-ICON_SOURCE="EvernightMoments.png"
 CONFIG_SOURCE="EvernightMoments.json"
+ICON_SOURCE="EvernightMoments.png"
 
-echo "===== $APP_NAME Uninstall ====="
+# User-specific Local Paths
+BIN_DEST_DIR="$HOME/.local/bin"
+ICON_DEST_DIR="$HOME/.local/share/icons"
+MENU_DEST_DIR="$HOME/.local/share/applications"
 
-# Paths
-BIN_DEST="$HOME/.local/bin/$APP_NAME"
-CONFIG_DEST="$HOME/.local/bin/$CONFIG_SOURCE"
-ICON_DEST="$HOME/.local/share/icons/$ICON_SOURCE"
-MENU_DEST="$HOME/.local/share/applications/$APP_NAME.desktop"
+# Target File Paths
+BIN_DEST="$BIN_DEST_DIR/$APP_NAME"
+CONFIG_DEST="$BIN_DEST_DIR/$CONFIG_SOURCE"
+ICON_DEST="$ICON_DEST_DIR/$ICON_SOURCE"
+MENU_DEST="$MENU_DEST_DIR/$APP_NAME.desktop"
 
+echo "------------------------------------------------------------"
+echo "Starting Uninstallation for $APP_NAME on Linux"
+echo "------------------------------------------------------------"
+
+# Identify Desktop Path
 USER_DESKTOP=$(xdg-user-dir DESKTOP 2>/dev/null)
-if [ -z "$USER_DESKTOP" ] || [ ! -d "$USER_DESKTOP" ]; then
-    USER_DESKTOP="$HOME/Desktop"
-fi
+[[ -z "$USER_DESKTOP" ]] && USER_DESKTOP="$HOME/Desktop"
 USER_SHORTCUT="$USER_DESKTOP/$APP_NAME.desktop"
 
-# 1. Remove Files
-for FILE in "$BIN_DEST" "$CONFIG_DEST" "$ICON_DEST" "$MENU_DEST" "$USER_SHORTCUT"; do
-    if [ -f "$FILE" ]; then
-        echo "Removing: $FILE"
-        rm -f "$FILE"
-    else
-        echo "Not found: $FILE"
-    fi
-done
-
-# 2. Update Database
-if command -v update-desktop-database >/dev/null 2>&1; then
-    echo "Updating user desktop database..."
-    update-desktop-database "$HOME/.local/share/applications"
+# ==============================================================================
+# 1. REMOVE DESKTOP SHORTCUT
+# ==============================================================================
+echo "[Step 1/4] Removing desktop shortcut..."
+if [ -f "$USER_SHORTCUT" ]; then
+    echo "Deleting shortcut:"
+    echo "  Target: $USER_SHORTCUT"
+    rm -f "$USER_SHORTCUT"
+    echo "  Status: Removed"
+else
+    echo "  Status: Not found"
 fi
 
-echo "Uninstallation complete."
+# ==============================================================================
+# 2. REMOVE MENU ENTRY & ICON
+# ==============================================================================
+echo "[Step 2/4] Removing menu entry and icon..."
+
+if [ -f "$MENU_DEST" ]; then
+    echo "Deleting .desktop file:"
+    echo "  Target: $MENU_DEST"
+    rm -f "$MENU_DEST"
+    echo "  Status: Removed"
+    
+    # Update desktop database so it disappears from app launcher immediately
+    echo "Refreshing desktop database..."
+    update-desktop-database "$MENU_DEST_DIR" 2>/dev/null
+else
+    echo "  Status: Menu entry not found"
+fi
+
+if [ -f "$ICON_DEST" ]; then
+    echo "Deleting icon file:"
+    echo "  Target: $ICON_DEST"
+    rm -f "$ICON_DEST"
+    echo "  Status: Removed"
+else
+    echo "  Status: Icon not found"
+fi
+
+# ==============================================================================
+# 3. REMOVE BINARY AND CONFIG
+# ==============================================================================
+echo "[Step 3/4] Removing binary and configuration..."
+
+if [ -f "$BIN_DEST" ]; then
+    echo "Deleting binary:"
+    echo "  Target: $BIN_DEST"
+    rm -f "$BIN_DEST"
+    echo "  Status: Removed"
+else
+    echo "  Status: Binary not found"
+fi
+
+if [ -f "$CONFIG_DEST" ]; then
+    echo "Deleting configuration:"
+    echo "  Target: $CONFIG_DEST"
+    rm -f "$CONFIG_DEST"
+    echo "  Status: Removed"
+else
+    echo "  Status: Configuration not found"
+fi
+
+# ==============================================================================
+# 4. FINAL SUMMARY
+# ==============================================================================
+echo "------------------------------------------------------------"
+echo "UNINSTALLATION COMPLETE"
+echo "------------------------------------------------------------"
+echo "All files related to '$APP_NAME' have been removed."
+echo "------------------------------------------------------------"

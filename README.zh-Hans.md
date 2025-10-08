@@ -50,6 +50,8 @@ UOS 1072 Pro
 
 - Windows 10 Pro 22H2, Windows 11 Pro 25H2, Windows Server 2025 24H2  (Intel & AMD x86_64)
 - UOS Professional 1072 (Intel & AMD x86_64)
+- Arch Linux 6.16 (Intel & AMD x86_64)
+- macOS 15.7 (Intel)
 
 ## 安装和卸载
 
@@ -89,10 +91,14 @@ chmod +x install.sh
 ```
 
 - 该脚本会自动完成：
-  - 创建程序菜单和桌面上的配置图标
-  - 将命令添加到 `/.local/bin` 文件夹中以便在终端中随时使用。
-    - 如果仍然找不到命令，需要自行将该文件夹的绝对路径添加到 `PATH` 环境变量。
+  - 安装程序到 `~/.local/bin/EvernightMoments` 。
+  - 安装图标资源到 `~/.local/share/icons/EvernightMoments.png` 。
+  - 为配置程序创建程序列表项 `~/.local/share/applications/EvernightMoments.desktop` ，分类为“图形”。
+  - 为配置程序创建桌面图标 `~/Desktop/EvernightMoments.desktop` 。
+  - 将命令添加到 `~/.local/bin` 文件夹中以便在终端中随时使用。
+    - 如果 `~/.local/bin` 不在 `PATH` 环境变量中，则会尝试自动添加。
 - **注意：部分操作系统会拒绝没有签名的程序运行**，你需要允许没有签名的程序运行才能使用本程序。通常在图形画面下，如果被系统拒绝运行，可以看到弹框提示。
+- 程序的配置将存储到 `~/.local/bin/EvernightMoments.json` 。
 
 #### 在 Linux 上卸载
 
@@ -100,6 +106,39 @@ chmod +x install.sh
 cd 刚解压的文件目录
 chmod +x uninstall.sh
 ./uninstall.sh
+```
+
+然后删除所有相关文件和环境变量。
+
+### 在 macOS 上安装
+
+1. 解压到不需要 root 权限就能写入的地方。
+2. 进入**终端**，使用以下命令:
+
+```bash
+cd 刚解压的文件目录
+chmod +x install.sh
+./install-mac.sh
+```
+
+- 该脚本会自动完成：
+  - 安装程序到 `~/.local/bin/EvernightMoments` 。
+  - 生成配置程序 `~/Applications/EvernightMoments Config.app` 。
+  - 为配置程序创建桌面图标 `~/Desktop/EvernightMoments Config.app` 。
+    - 你可以将它从桌面上移动到 `/Applications` (应用程序文件夹)里面:
+    - `mv "$HOME/Desktop/EvernightMoments Config.app" "/Applications/EvernightMoments Config.app"`
+  - 将命令添加到 `~/.local/bin` 文件夹中以便在终端中随时使用。
+    - 如果 `~/.local/bin` 不在 `PATH` 环境变量中，则会尝试自动添加。
+- **注意：系统可能会拒绝没有签名的程序运行**，你需要允许没有签名的程序运行才能使用本程序。
+  - 如果遇到阻止，请前往“系统设置”中的“隐私和安全性”，滚动到末端，找到“允许”按钮并点击。
+- 程序的配置将存储到 `~/.local/bin/EvernightMoments.json` 。
+
+#### 在 macOS 上卸载
+
+```bash
+cd 刚解压的文件目录
+chmod +x uninstall.sh
+./uninstall-mac.sh
 ```
 
 然后删除所有相关文件和环境变量。
@@ -203,7 +242,7 @@ chmod +x uninstall.sh
 
 先安装 [Go](https://go.dev/) ，版本需大于等于 `1.26.0` 。
 
-### Windows 系统下
+### 在 Windows 系统中编译
 
 可以使用 `build.bat` 脚本编译到各个平台（编译到 `bin` 文件夹中）。
 
@@ -215,14 +254,9 @@ chmod +x uninstall.sh
 - `test_files.bat`: 测试多个文件输入（取自 `TestPhotos` 中的所有文件）。
 - 如果测试时使用了默认格式对 `TestPhotos` 文件夹中的照片进行了重命名，可以执行 `python test_undo.py` 撤销重命名。
 
-### 所有系统下
+### 在 macOS / Linux 系统中编译
 
-`cd` 进入源代码文件夹并执行：
-
-```bash
-go generate
-go build .
-```
+同上，把 `.bat` 换成 `.sh` 即可。
 
 ## LICENSE
 

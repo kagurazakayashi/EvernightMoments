@@ -50,6 +50,8 @@ This program has been tested on the following platforms:
 
 - Windows 11 25H2 (Intel & AMD x86_64)
 - UOS 1072 (Intel & AMD x86_64)
+- Arch Linux 6.16 (Intel & AMD x86_64)
+- macOS 15.7 (Intel)
 
 ## Installation and Uninstallation
 
@@ -77,32 +79,69 @@ Adding the program to the "Send to" menu allows you to use it anytime by right-c
 
 - Simply delete all related files and remove the path from your environment variables.
 
-### Installing on Linux
+### Installation on Linux
 
-1. Extract the files to a location where you have write permissions without needing root privileges.
+1. Extract to a location where write access does not require root privileges.
 2. Open the **Terminal** and use the following commands:
 
 ```bash
-cd /path/to/extracted/directory
+cd path_to_extracted_directory
 chmod +x install.sh
 ./install.sh
 ```
 
 - This script will automatically:
-  - Create configuration icons in the application menu and on the desktop.
-  - Add the command to the `/.local/bin` folder for easy access in the terminal at any time.
-    - If the command still cannot be found, you will need to manually add the absolute path of this folder to your `PATH` environment variable.
-- **Note: Some operating systems will refuse to run unsigned programs.** You need to allow unsigned programs to run in order to use this software. Typically, in a graphical user interface (GUI), a pop-up dialog will appear if the system blocks the execution.
+  - Install the program to `~/.local/bin/EvernightMoments`.
+  - Install the icon resources to `~/.local/share/icons/EvernightMoments.png`.
+  - Create an application menu entry for the configuration program at `~/.local/share/applications/EvernightMoments.desktop`, categorized under "Graphics".
+  - Create a desktop icon for the configuration program at `~/Desktop/EvernightMoments.desktop`.
+  - Add the command to the `~/.local/bin` folder so it can be easily accessed in the terminal at any time.
+    - If `~/.local/bin` is not in your `PATH` environment variable, it will attempt to add it automatically.
+- **Note: Some operating systems will block unsigned programs from running.** You need to allow unsigned programs to execute in order to use this program. Generally, in a graphical environment, you will see a popup alert if it is blocked by the system.
+- The program's configuration will be stored in `~/.local/bin/EvernightMoments.json`.
 
-#### Uninstalling on Linux
+#### Uninstallation on Linux
 
 ```bash
-cd /path/to/extracted/directory
+cd path_to_extracted_directory
 chmod +x uninstall.sh
 ./uninstall.sh
 ```
 
-Then, delete all related files and environment variables.
+Then manually delete all related files and environment variables.
+
+### Installation on macOS
+
+1. Extract to a location where write access does not require root privileges.
+2. Open the **Terminal** and use the following commands:
+
+```bash
+cd path_to_extracted_directory
+chmod +x install.sh
+./install-mac.sh
+```
+
+- This script will automatically:
+  - Install the program to `~/.local/bin/EvernightMoments`.
+  - Generate the configuration program at `~/Applications/EvernightMoments Config.app`.
+  - Create a desktop icon for the configuration program at `~/Desktop/EvernightMoments Config.app`.
+    - You can move it from the desktop to the `/Applications` :
+    - `mv "$HOME/Desktop/EvernightMoments Config.app" "/Applications/EvernightMoments Config.app"`
+  - Add the command to the `~/.local/bin` folder so it can be easily accessed in the terminal at any time.
+    - If `~/.local/bin` is not in your `PATH` environment variable, it will attempt to add it automatically.
+- **Note: The system might block unsigned programs from running.** You need to allow unsigned programs to execute in order to use this program.
+  - If blocked, please go to "Privacy & Security" in "System Settings", scroll down to the bottom, find the "Allow" (or "Open Anyway") button, and click it.
+- The program's configuration will be stored in `~/.local/bin/EvernightMoments.json`.
+
+#### Uninstallation on macOS
+
+```bash
+cd path_to_extracted_directory
+chmod +x uninstall.sh
+./uninstall-mac.sh
+```
+
+Then manually delete all related files and environment variables.
 
 ## Instructions
 
@@ -197,7 +236,7 @@ Additional examples:
 
 First, install [Go](https://go.dev/). The version must be `1.26.0` or higher.
 
-### On Windows
+### Compiling on Windows
 
 You can use the `build.bat` script to compile for various platforms (output to the `bin` folder).
 
@@ -209,14 +248,9 @@ You can use the `build.bat` script to compile for various platforms (output to t
 - `test_files.bat`: Test multiple file inputs (using all files from `TestPhotos`).
 - If the photos in the `TestPhotos` folder were renamed using the default format during testing, you can run `python test_undo.py` to undo the renaming.
 
-### On All Systems
+### Compiling on macOS / Linux
 
-`cd` into the source code folder and run:
-
-```bash
-go generate
-go build .
-```
+Same as above, just replace `.bat` with `.sh`.
 
 ## LICENSE
 

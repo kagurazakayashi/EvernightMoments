@@ -50,6 +50,8 @@ UOS 1072 Pro
 
 - Windows 11 25H2 (Intel & AMD x86_64)
 - UOS 1072 (Intel & AMD x86_64)
+- Arch Linux 6.16 (Intel & AMD x86_64)
+- macOS 15.7 (Intel)
 
 ## 安裝與解除安裝
 
@@ -79,27 +81,64 @@ UOS 1072 Pro
 
 ### 在 Linux 上安裝
 
-1. 解壓縮到不需要 root 權限即可寫入的地方。
+1. 解壓縮到不需 root 權限就能寫入的地方。
 2. 進入**終端機**，使用以下指令：
 
 ```bash
-cd 剛解壓的文件目錄
+cd 剛解壓縮的檔案目錄
 chmod +x install.sh
 ./install.sh
 ```
 
-- 此腳本將自動完成：
-  - 在應用程式選單與桌面上建立配置圖示
-  - 將指令新增至 `/.local/bin` 資料夾，以便隨時在終端機中使用。
-    - 若仍找不到指令，需自行將該資料夾的絕對路徑新增至 `PATH` 環境變數。
-- **注意：部分作業系統會拒絕執行未經簽署的程式**，您需要允許未經簽署的程式執行才能使用本程式。通常在圖形介面下，如果被系統拒絕執行，可以看到彈出式視窗提示。
+- 該腳本會自動完成：
+  - 安裝程式到 `~/.local/bin/EvernightMoments`。
+  - 安裝圖示資源到 `~/.local/share/icons/EvernightMoments.png`。
+  - 為設定程式建立應用程式列表項目 `~/.local/share/applications/EvernightMoments.desktop`，分類為「圖形」。
+  - 為設定程式建立桌面圖示 `~/Desktop/EvernightMoments.desktop`。
+  - 將指令新增至 `~/.local/bin` 資料夾中，以便在終端機裡隨時使用。
+    - 如果 `~/.local/bin` 不在 `PATH` 環境變數中，則會嘗試自動加入。
+- **注意：部分作業系統會拒絕未經簽署的程式執行**，您需要允許未經簽署的程式執行才能使用本程式。通常在圖形介面下，如果被系統拒絕執行，會看到彈出視窗提示。
+- 程式的設定將儲存至 `~/.local/bin/EvernightMoments.json`。
 
 #### 在 Linux 上解除安裝
 
 ```bash
-cd 剛解壓的文件目錄
+cd 剛解壓縮的檔案目錄
 chmod +x uninstall.sh
 ./uninstall.sh
+```
+
+然後刪除所有相關檔案與環境變數。
+
+### 在 macOS 上安裝
+
+1. 解壓縮到不需 root 權限就能寫入的地方。
+2. 進入**終端機**，使用以下指令：
+
+```bash
+cd 剛解壓縮的檔案目錄
+chmod +x install.sh
+./install-mac.sh
+```
+
+- 該腳本會自動完成：
+  - 安裝程式到 `~/.local/bin/EvernightMoments`。
+  - 產生設定程式 `~/Applications/EvernightMoments Config.app`。
+  - 為設定程式建立桌面圖示 `~/Desktop/EvernightMoments Config.app`。
+    - 你可以將它從桌面上移動到 `/Applications` (應用程式資料夾) 裡面：
+    - `mv "$HOME/Desktop/EvernightMoments Config.app" "/Applications/EvernightMoments Config.app"`
+  - 將指令新增至 `~/.local/bin` 資料夾中，以便在終端機裡隨時使用。
+    - 如果 `~/.local/bin` 不在 `PATH` 環境變數中，則會嘗試自動加入。
+- **注意：系統可能會拒絕未經簽署的程式執行**，您需要允許未經簽署的程式執行才能使用本程式。
+  - 如果遇到阻擋，請前往「系統設定」中的「隱私權與安全性」，捲動到最底部，找到「強制打開」或「允許」按鈕並點擊。
+- 程式的設定將儲存至 `~/.local/bin/EvernightMoments.json`。
+
+#### 在 macOS 上解除安裝
+
+```bash
+cd 剛解壓縮的檔案目錄
+chmod +x uninstall.sh
+./uninstall-mac.sh
 ```
 
 然後刪除所有相關檔案與環境變數。
@@ -203,7 +242,7 @@ chmod +x uninstall.sh
 
 先安裝 [Go](https://go.dev/)，版本需大於等於 `1.26.0`。
 
-### Windows 系統下
+### 在 Windows 系統中編譯
 
 可以使用 `build.bat` 腳本編譯到各個平台（編譯至 `bin` 資料夾中）。
 
@@ -215,14 +254,9 @@ chmod +x uninstall.sh
 - `test_files.bat`: 測試多個檔案輸入（取自 `TestPhotos` 中的所有檔案）。
 - 如果測試時使用了預設格式對 `TestPhotos` 資料夾中的照片進行了重新命名，可以執行 `python test_undo.py` 復原重新命名。
 
-### 所有系統下
+### 在 macOS / Linux 系統中編譯
 
-`cd` 進入原始碼資料夾並執行：
-
-```bash
-go generate
-go build .
-```
+同上，將 `.bat` 換成 `.sh` 即可。
 
 ## LICENSE
 

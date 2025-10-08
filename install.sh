@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# --- Configuration ---
+# ==============================================================================
+# CONFIGURATION
+# ==============================================================================
 APP_NAME="EvernightMoments"
 BIN_SOURCE="EvernightMoments"
-ICON_SOURCE="EvernightMoments.png"
-# Including the config file mentioned previously
 CONFIG_SOURCE="EvernightMoments.json"
+ICON_SOURCE="EvernightMoments.png"
 
-echo "===== $APP_NAME Install ====="
-
-# User-specific Local Paths
+# User-specific Local Paths (XDG Standard)
 BIN_DEST_DIR="$HOME/.local/bin"
 ICON_DEST_DIR="$HOME/.local/share/icons"
 MENU_DEST_DIR="$HOME/.local/share/applications"
@@ -20,52 +19,72 @@ CONFIG_DEST="$BIN_DEST_DIR/$CONFIG_SOURCE"
 ICON_DEST="$ICON_DEST_DIR/$ICON_SOURCE"
 MENU_DEST="$MENU_DEST_DIR/$APP_NAME.desktop"
 
-# --- Directory Preparation ---
-# Ensure local directories exist
-mkdir -p "$BIN_DEST_DIR"
-mkdir -p "$ICON_DEST_DIR"
-mkdir -p "$MENU_DEST_DIR"
+echo "------------------------------------------------------------"
+echo "Starting Installation for $APP_NAME on Linux"
+echo "------------------------------------------------------------"
 
-# --- File Existence Check ---
+# ==============================================================================
+# 1. DIRECTORY PREPARATION
+# ==============================================================================
+echo "[Step 1/7] Preparing directories..."
+for dir in "$BIN_DEST_DIR" "$ICON_DEST_DIR" "$MENU_DEST_DIR"; do
+    if [ ! -d "$dir" ]; then
+        echo "Creating directory: $dir"
+        mkdir -p "$dir"
+    else
+        echo "Directory exists: $dir"
+    fi
+done
+
+# Identify Desktop Path
+USER_DESKTOP=$(xdg-user-dir DESKTOP 2>/dev/null)
+[[ -z "$USER_DESKTOP" ]] && USER_DESKTOP="$HOME/Desktop"
+
+# Check if source binary exists
 if [[ ! -f "$BIN_SOURCE" ]]; then
-    echo "Error: Source executable '$BIN_SOURCE' not found in current directory."
+    echo "Error: Source binary '$BIN_SOURCE' not found in current directory."
     exit 1
 fi
 
-# --- Identify Desktop Path ---
-USER_DESKTOP=$(xdg-user-dir DESKTOP 2>/dev/null)
-if [ -z "$USER_DESKTOP" ] || [ ! -d "$USER_DESKTOP" ]; then
-    USER_DESKTOP="$HOME/Desktop"
-fi
+# ==============================================================================
+# 2. INSTALL BINARY AND CONFIG
+# ==============================================================================
+echo "[Step 2/7] Installing files to local bin..."
 
-echo "Target User: $USER"
-echo "Target Desktop: $USER_DESKTOP"
-
-# 1. Install Binary
-echo "Copying binary: ./$BIN_SOURCE -> $BIN_DEST"
+echo "Copying binary:"
+echo "  From: ./$BIN_SOURCE"
+echo "  To:   $BIN_DEST"
 cp "$BIN_SOURCE" "$BIN_DEST"
 chmod 755 "$BIN_DEST"
-chmod +x "$BIN_DEST"
 
-# 1.1 Install Config (if exists)
 if [[ -f "$CONFIG_SOURCE" ]]; then
-    echo "Copying config: ./$CONFIG_SOURCE -> $CONFIG_DEST"
+    echo "Copying configuration:"
+    echo "  From: ./$CONFIG_SOURCE"
+    echo "  To:   $CONFIG_DEST"
     cp "$CONFIG_SOURCE" "$CONFIG_DEST"
     chmod 644 "$CONFIG_DEST"
 fi
 
-# 2. Install Icon
+# ==============================================================================
+# 3. INSTALL ICON
+# ==============================================================================
+echo "[Step 3/7] Installing application icon..."
 if [[ -f "$ICON_SOURCE" ]]; then
-    echo "Copying icon: ./$ICON_SOURCE -> $ICON_DEST"
+    echo "Copying icon:"
+    echo "  From: ./$ICON_SOURCE"
+    echo "  To:   $ICON_DEST"
     cp "$ICON_SOURCE" "$ICON_DEST"
     chmod 644 "$ICON_DEST"
+else
+    echo "Notice: Icon source not found, shortcut might show default icon."
 fi
 
-# 3. Create .desktop File
+# ==============================================================================
+# 4. CREATE DESKTOP ENTRY
+# ==============================================================================
+echo "[Step 4/7] Generating .desktop entry..."
 TMP_DESKTOP="/tmp/$APP_NAME.desktop"
-echo "Creating desktop entry file at $TMP_DESKTOP"
 
-# Note: Using absolute path for Icon in local installation to ensure reliability
 cat <<EOF > "$TMP_DESKTOP"
 [Desktop Entry]
 Version=1.0
@@ -81,28 +100,75 @@ Terminal=true
 Categories=Graphics;
 EOF
 
-# 4. Install to User Menu
-echo "Installing menu entry: $TMP_DESKTOP -> $MENU_DEST"
+echo "Installing menu entry:"
+echo "  To: $MENU_DEST"
 mv "$TMP_DESKTOP" "$MENU_DEST"
 chmod 644 "$MENU_DEST"
-chmod +x "$MENU_DEST"
 
-# 5. Install to User's Desktop
+# Update desktop database to ensure it shows up in menus
+update-desktop-database "$MENU_DEST_DIR" 2>/dev/null
+
+# ==============================================================================
+# 5. CREATE DESKTOP SHORTCUT
+# ==============================================================================
+echo "[Step 5/7] Creating desktop shortcut..."
 USER_SHORTCUT="$USER_DESKTOP/$APP_NAME.desktop"
-echo "Creating desktop shortcut: $MENU_DEST -> $USER_SHORTCUT"
+
+echo "Creating shortcut:"
+echo "  Source: $MENU_DEST"
+echo "  To:     $USER_SHORTCUT"
 cp "$MENU_DEST" "$USER_SHORTCUT"
-chmod 644 "$USER_SHORTCUT"
 chmod +x "$USER_SHORTCUT"
 
-# 6. Refresh Desktop Database
-if command -v update-desktop-database >/dev/null 2>&1; then
-    echo "Updating user desktop database..."
-    update-desktop-database "$MENU_DEST_DIR"
+# ==============================================================================
+# 6. SHELL PATH CONFIGURATION
+# ==============================================================================
+echo "[Step 6/7] Checking Environment PATH..."
+CURRENT_SHELL=$(basename "$SHELL")
+PATH_LINE="export PATH=\"\$HOME/.local/bin:\$PATH\""
+CONF_FILE=""
+
+case "$CURRENT_SHELL" in
+    zsh)  CONF_FILE="$HOME/.zshrc" ;;
+    bash) CONF_FILE="$HOME/.bashrc" ;;
+    fish)
+        CONF_FILE="$HOME/.config/fish/config.fish"
+        PATH_LINE="set -gx PATH \$HOME/.local/bin \$PATH"
+        mkdir -p "$(dirname "$CONF_FILE")"
+        ;;
+    *)    CONF_FILE="$HOME/.profile" ;;
+esac
+
+echo "Detected Shell: $CURRENT_SHELL"
+echo "Target Config:  $CONF_FILE"
+
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    if ! grep -qF "$PATH_LINE" "$CONF_FILE" 2>/dev/null; then
+        echo "Updating PATH in $CONF_FILE..."
+        echo -e "\n$PATH_LINE" >> "$CONF_FILE"
+        PATH_UPDATED=true
+    else
+        echo "PATH entry already exists in $CONF_FILE."
+    fi
+else
+    echo "PATH is already configured."
 fi
 
-echo "Binary: $BIN_DEST"
-echo "Config: $CONFIG_DEST"
-echo "Menu Entry: $MENU_DEST"
-echo "Desktop Shortcut: $USER_SHORTCUT"
-echo "Note: Please ensure $BIN_DEST_DIR is in your PATH."
-echo "Installation complete for $APP_NAME."
+# ==============================================================================
+# 7. FINAL SUMMARY
+# ==============================================================================
+echo "------------------------------------------------------------"
+echo "INSTALLATION COMPLETE"
+echo "------------------------------------------------------------"
+echo "Binary Path:      $BIN_DEST"
+echo "Icon Path:        $ICON_DEST"
+echo "Menu Entry:       $MENU_DEST"
+echo "Desktop Link:     $USER_SHORTCUT"
+echo "------------------------------------------------------------"
+
+if [ "$PATH_UPDATED" = true ]; then
+    echo "IMPORTANT: Please run 'source $CONF_FILE' or restart terminal."
+    echo "Then you can run the app by typing: $APP_NAME"
+else
+    echo "Installation successful. You can now run '$APP_NAME' from anywhere."
+fi
