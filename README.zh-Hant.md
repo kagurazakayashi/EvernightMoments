@@ -30,7 +30,7 @@ UOS 1072 Pro
 
 ## 下載
 
-最新版本: v1.1.0
+最新版本: v1.2.0
 
 前往 [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) 下載最新版本。
 
@@ -45,6 +45,8 @@ UOS 1072 Pro
 |  Linux   | Intel/AMD x86 |  64  | `EvernightMoments_v*_linux-x64.7z`     |
 |  Linux   |      ARM      |  32  | `EvernightMoments_v*_linux-arm32.7z`   |
 |  Linux   |      ARM      |  64  | `EvernightMoments_v*_linux-arm64.7z`   |
+
+標有 `ExifTool` 的軟體包表示已內建 ExifTool 執行檔。ExifTool 是選配的，但它提供了更廣泛的媒體檔案支援以及最新的相機型號支援。詳情請參閱[安裝 ExifTool 以提升辨識能力](#安裝-exiftool-以提升識別能力)。
 
 本程式已在以下平台完成測試：
 
@@ -142,6 +144,36 @@ chmod +x uninstall.sh
 ```
 
 然後刪除所有相關檔案與環境變數。
+
+### 安裝 ExifTool 以提升識別能力
+
+本程式內建的 EXIF 解析器為 [goexif](https://github.com/rwcarlsen/goexif)，它只能處理有限的格式。並且由於該函式庫和本程式的更新限制，對新的相機設備無法提供及時的支援。強烈建議您安裝 ExifTool 來獲取最新的相機支援能力。
+
+[ExifTool](https://github.com/exiftool/exiftool) 是 Phil Harvey 開發的自由開源軟體，專門用於處理影像、影片及音訊的 metadata，只要保持更新該程式，就能為本程式提供最新的相機 RAW 支援和處理更多類型的檔案格式。
+
+有關 ExifTool 的下載和安裝說明：
+
+#### 使用套件管理員安裝 ExifTool
+
+如果你的系統中安裝有套件管理員，可以使用你熟悉的套件管理員完成快速安裝。例如：
+
+- Windows: `choco install exiftool` 或者 `scoop install exiftool`
+- macOS: `brew install exiftool`
+- Debian / Ubuntu / Mint: `sudo apt update && sudo apt install perl libimage-exiftool-perl`
+- CentOS / RHEL / Fedora: `sudo dnf install perl perl-Image-ExifTool`
+- Arch Linux: `sudo pacman -S perl perl-image-exiftool`
+
+如果沒有套件管理員，可以按下面步驟安裝：
+
+#### 下載安裝 ExifTool
+
+先前往 [ExifTool 主頁](https://github.com/exiftool/exiftool) 下載對應系統的最新版本程式。
+
+- **Windows** 有兩種方式:
+  - **全域安裝**: 請查看官方[安裝與解除安裝說明](https://exiftool.org/install.html#Windows)操作。在完成後，應確保在「命令提示字元」中任意位置可以輸入 `exiftool.exe` 命令。
+  - **只限本程式使用**: 你將得到一個 zip 檔案，將該 zip 檔案中所有的 ExifTool 檔案解壓縮到本程式資料夾內（確保 `exiftool(-k).exe` 或 `exiftool.exe` 和 `EvernightMoments.exe` 在同一個資料夾內）。
+- **macOS**: 請查看官方[安裝與解除安裝說明](https://exiftool.org/install.html#MacOS)操作。
+- **Linux**: 請查看官方[安裝與解除安裝說明](https://exiftool.org/install.html#Unix)操作。
 
 ## 使用說明
 

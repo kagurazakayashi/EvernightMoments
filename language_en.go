@@ -51,5 +51,7 @@ func Language_en() {
 		"非法字符格式":    "The character '%s' is not allowed in this format.",
 		"非法字符":      "1. File or folder names cannot include any of the following characters: \\ / : ? ' \" < * > | \n2. The full name of the file or folder cannot be: NUL, COM1 ~ COM9, LPT1 ~ LPT9\n3. The last character cannot be '.' .",
 		"重新输入":      "Please try again",
+		"获取器":       "Extractor",
+		"内置":        "Built-in",
 	})
 }

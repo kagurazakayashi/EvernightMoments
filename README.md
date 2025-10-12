@@ -30,7 +30,7 @@ UOS 1072 Pro
 
 ## Download
 
-Latest Version: v1.1.0
+Latest Version: v1.2.0
 
 Go to [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) to download the latest version.
 
@@ -45,6 +45,8 @@ Go to [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) t
 |  Linux  | Intel/AMD x86 |  64  | `EvernightMoments_v*_linux-x64.7z`     |
 |  Linux  |      ARM      |  32  | `EvernightMoments_v*_linux-arm32.7z`   |
 |  Linux  |      ARM      |  64  | `EvernightMoments_v*_linux-arm64.7z`   |
+
+Packages with `ExifTool` indicate that the ExifTool executable is already built-in. ExifTool is optional, but it provides extensive media file support and updated camera support. For details, please see [Install ExifTool to Improve Recognition Capabilities](#install-exiftool-to-improve-recognition-capabilities).
 
 This program has been tested on the following platforms:
 
@@ -142,6 +144,36 @@ chmod +x uninstall.sh
 ```
 
 Then manually delete all related files and environment variables.
+
+### Install ExifTool to Improve Recognition Capabilities
+
+The built-in EXIF parser for this program is [goexif](https://github.com/rwcarlsen/goexif), which can only handle a limited number of formats. Furthermore, due to the update limitations of both this library and this program, timely support for new camera devices cannot be guaranteed. It is strongly recommended that you install ExifTool to obtain the latest camera support.
+
+[ExifTool](https://github.com/exiftool/exiftool) is a free and open-source software developed by Phil Harvey, specifically designed for reading, writing, and editing metadata in images, videos, and audio. By keeping this tool updated, you can equip this program with the latest RAW camera support and the ability to process more file formats.
+
+Regarding the download and installation instructions for ExifTool:
+
+#### Install ExifTool using a Package Manager
+
+If you have a package manager installed on your system, you can use your preferred one for a quick installation. For example:
+
+- Windows: `choco install exiftool` or `scoop install exiftool`
+- macOS: `brew install exiftool`
+- Debian / Ubuntu / Mint: `sudo apt update && sudo apt install perl libimage-exiftool-perl`
+- CentOS / RHEL / Fedora: `sudo dnf install perl perl-Image-ExifTool`
+- Arch Linux: `sudo pacman -S perl perl-image-exiftool`
+
+If you do not have a package manager, you can install it following these steps:
+
+#### Download and Install ExifTool
+
+First, go to the [ExifTool Homepage](https://github.com/exiftool/exiftool) to download the latest version of the program for your specific operating system.
+
+- **Windows** has two methods:
+  - **Global Installation**: Please refer to the official [Installation and Uninstallation Instructions](https://exiftool.org/install.html#Windows). Once completed, ensure that you can enter the `exiftool.exe` command from any location in the "Command Prompt".
+  - **For this program only**: You will receive a zip file. Extract all ExifTool files from this zip archive into this program's folder (make sure `exiftool(-k).exe` or `exiftool.exe` is located in the same folder as `EvernightMoments.exe`).
+- **macOS**: Please refer to the official [Installation and Uninstallation Instructions](https://exiftool.org/install.html#MacOS).
+- **Linux**: Please refer to the official [Installation and Uninstallation Instructions](https://exiftool.org/install.html#Unix).
 
 ## Instructions
 

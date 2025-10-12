@@ -44,6 +44,7 @@ func runRenameMode(files []string) {
 	fmt.Println(outLine)
 	fmt.Println(i18n.T("当前格式") + ": " + conf.Format)
 	fmt.Println(i18n.T("要配置格式") + " " + evernightMoments)
+	fmt.Println(GetExiftoolPathI18n())
 	fmt.Println(outLine)
 	fmt.Println(i18n.T("正在分析") + "...")
 	fmt.Println()
@@ -92,7 +93,7 @@ func runRenameMode(files []string) {
 
 		// 輸出分析結果到控制台
 		fmt.Printf("[%d] %s: %s\n", len(plans), i18n.T("原文件"), absPath)
-		fmt.Printf("-> %s %s : %s\n", i18n.T("依据"), source, rawTimeStr)
+		fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), source, rawTimeStr)
 		fmt.Printf("-> %s: %s\n", i18n.T("新文件名"), newName)
 		fmt.Println()
 		counter++
@@ -181,6 +182,7 @@ func runRenameMode(files []string) {
 				fmt.Println("-> " + i18n.T("重命名成功"))
 				successCount++
 			}
+			// fmt.Println("-> " + i18n.T("重命名成功")) //DEBUG
 		}
 		// 輸出最終處理結果統計
 		fmt.Println(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans)))

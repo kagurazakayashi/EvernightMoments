@@ -28,7 +28,7 @@ UOS 1072 Pro
 
 ## ダウンロード
 
-最新バージョン: v1.1.0
+最新バージョン: v1.2.0
 
 [Releases](https://github.com/kagurazakayashi/EvernightMoments/releases) から最新バージョンをダウンロードしてください。
 
@@ -43,6 +43,8 @@ UOS 1072 Pro
 |  Linux  | Intel/AMD x86 |   64   | `EvernightMoments_v*_linux-x64.7z`     |
 |  Linux  |      ARM      |   32   | `EvernightMoments_v*_linux-arm32.7z`   |
 |  Linux  |      ARM      |   64   | `EvernightMoments_v*_linux-arm64.7z`   |
+
+`ExifTool` 付きのパッケージには、ExifTool 実行ファイルが同梱されています。ExifTool はオプションですが、より幅広いメディアファイル形式や最新機種のサポートが可能になります。詳細は [認識機能を向上させるための ExifTool のインストール](#認識機能を向上させるための-exiftool-のインストール) をご確認ください。
 
 このプログラムは以下のプラットフォームで動作確認済みです：
 
@@ -140,6 +142,36 @@ chmod +x uninstall.sh
 ```
 
 その後、関連するすべてのファイルと環境変数を削除してください。
+
+### 認識機能を向上させるための ExifTool のインストール
+
+本プログラムに内蔵されている EXIF パーサーは [goexif](https://github.com/rwcarlsen/goexif) ですが、これは限られたフォーマットしか処理できません。また、このライブラリおよび本プログラムの更新制限により、新しいカメラデバイスに対するタイムリーなサポートを提供することができません。最新のカメラサポートを得るために、ExifTool をインストールすることを強くお勧めします。
+
+[ExifTool](https://github.com/exiftool/exiftool) は Phil Harvey 氏によって開発されたフリーでオープンソースのソフトウェアであり、画像、動画、音声のメタデータ処理に特化しています。このプログラムを最新の状態に保つことで、本プログラムに最新のカメラ RAW サポートを提供し、より多くの種類のファイルフォーマットを処理できるようになります。
+
+ExifTool のダウンロードおよびインストール手順について：
+
+#### パッケージマネージャーを使用した ExifTool のインストール
+
+システムにパッケージマネージャーがインストールされている場合は、使い慣れたパッケージマネージャーを使用して素早くインストールを完了できます。例：
+
+- Windows: `choco install exiftool` または `scoop install exiftool`
+- macOS: `brew install exiftool`
+- Debian / Ubuntu / Mint: `sudo apt update && sudo apt install perl libimage-exiftool-perl`
+- CentOS / RHEL / Fedora: `sudo dnf install perl perl-Image-ExifTool`
+- Arch Linux: `sudo pacman -S perl perl-image-exiftool`
+
+パッケージマネージャーがない場合は、以下の手順でインストールできます：
+
+#### ExifTool のダウンロードとインストール
+
+まず、[ExifTool のホームページ](https://github.com/exiftool/exiftool) にアクセスし、お使いのシステムに対応する最新バージョンのプログラムをダウンロードしてください。
+
+- **Windows** の場合は2つの方法があります:
+  - **グローバルインストール**: 公式の[インストールおよびアンインストール手順](https://exiftool.org/install.html#Windows)を参照して操作してください。完了後、「コマンドプロンプト」の任意の場所で `exiftool.exe` コマンドが実行できることを確認してください。
+  - **本プログラムでのみ使用する場合**: zip ファイルがダウンロードされます。その zip ファイル内のすべての ExifTool ファイルを本プログラムのフォルダー内に展開します（`exiftool(-k).exe` または `exiftool.exe` が `EvernightMoments.exe` と同じフォルダー内にあることを確認してください）。
+- **macOS**: 公式の[インストールおよびアンインストール手順](https://exiftool.org/install.html#MacOS)を参照して操作してください。
+- **Linux**: 公式の[インストールおよびアンインストール手順](https://exiftool.org/install.html#Unix)を参照して操作してください。
 
 ## 使用方法
 

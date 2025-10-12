@@ -2,7 +2,7 @@
 
 export NAME="EvernightMoments"
 export PNAME="EvernightMoments"
-export VERSION="1.1.0"
+export VERSION="1.2.0"
 
 rm -rf bin
 mkdir -p bin

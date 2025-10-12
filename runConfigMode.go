@@ -53,6 +53,7 @@ func runConfigMode() {
 	fmt.Println(i18n.T("介绍1"))
 	fmt.Println(evernightMoments + " " + i18n.T("介绍2"))
 	fmt.Println("https://github.com/kagurazakayashi/EvernightMoments")
+	fmt.Println(GetExiftoolPathI18n())
 	fmt.Println(outLine)
 	fmt.Println(i18n.T("使用方式", evernightMoments))
 	fmt.Println(outLine)

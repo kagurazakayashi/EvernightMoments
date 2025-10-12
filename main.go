@@ -19,13 +19,16 @@ const (
 	// evernightMoments 程式名稱
 	evernightMoments = "EvernightMoments"
 	// evernightMomentsVersion 程式版本號
-	evernightMomentsVersion = "1.1.0"
+	evernightMomentsVersion = "1.2.0"
 )
 
 // main 是程式的進入點
 func main() {
 	// 取得命令列參數（排除執行檔路徑本身）
 	args := os.Args[1:]
+
+	// 檢測 Exiftool 是否存在
+	GetExiftoolPath()
 
 	// 若無參數傳入，則進入「設定模式」（Config Mode）
 	if len(args) == 0 {

@@ -2,13 +2,13 @@
     "FixedFileInfo": {
         "FileVersion": {
             "Major": 1,
-            "Minor": 1,
+            "Minor": 2,
             "Patch": 0,
             "Build": 0
         },
         "ProductVersion": {
             "Major": 1,
-            "Minor": 1,
+            "Minor": 2,
             "Patch": 0,
             "Build": 0
         },
@@ -22,14 +22,14 @@
         "Comments": "EvernightMoments is a utility that automatically renames your visual archives by extracting original capture timestamps.",
         "CompanyName": "Kagurazaka Yashi",
         "FileDescription": "EvernightMoments is a utility that automatically renames your visual archives by extracting original capture timestamps.",
-        "FileVersion": "1.1.0.0",
+        "FileVersion": "1.2.0.0",
         "InternalName": "moe.yashi.evernightmoments",
         "LegalCopyright": "2026, Kagurazaka Yashi.",
         "LegalTrademarks": "Kagurazaka Yashi",
         "OriginalFilename": "main.exe",
         "PrivateBuild": "",
         "ProductName": "EvernightMoments",
-        "ProductVersion": "1.1.0.0",
+        "ProductVersion": "1.2.0.0",
         "SpecialBuild": ""
     },
     "VarFileInfo": {
