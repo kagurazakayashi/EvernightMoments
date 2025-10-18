@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -110,4 +111,21 @@ func ContainsInvalidChars(s string) (bool, string) {
 
 	// 通過所有檢查，回傳合法
 	return false, ""
+}
+
+// PadNumberByReference 根據 ref 的位數給 val 前面補 0
+func PadNumberByReference(val int, ref int) string {
+	// 1. 處理負數情況：通常位數判斷基於絕對值
+	absRef := ref
+	if ref < 0 {
+		absRef = -ref
+	}
+
+	// 2. 將第二個 int 轉為字串，獲取其長度（即位數）
+	width := len(strconv.Itoa(absRef))
+
+	// 3. 使用 fmt.Sprintf 進行格式化
+	// %0*d 中，* 是一個佔位符，表示寬度由後面的引數 width 決定
+	// 0 表示長度不足時在前面補 0
+	return fmt.Sprintf("%0*d", width, val)
 }

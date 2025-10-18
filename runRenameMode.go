@@ -47,41 +47,70 @@ func runRenameMode(files []string) {
 	fmt.Println(GetExiftoolPathI18n())
 	fmt.Println(outLine)
 	fmt.Println(i18n.T("正在分析") + "...")
-	fmt.Println()
 
-	// 2. 定義處理單一檔案的閉包函式 (Closure)
-	// 此函式會分析檔案時間、生成新名稱並檢查合法性，最後加入計畫清單
-	addFileToPlan := func(path string) {
+	// 2. 預掃描邏輯，先獲取所有檔案路徑
+	var allPaths []string
+	for _, pattern := range cleanFiles {
+		matches, _ := filepath.Glob(pattern)
+		for _, path := range matches {
+			info, err := os.Stat(path)
+			if err != nil {
+				continue
+			}
+			if info.IsDir() {
+				if recursive {
+					filepath.WalkDir(path, func(p string, d os.DirEntry, err error) error {
+						if err == nil && !d.IsDir() {
+							allPaths = append(allPaths, p)
+						}
+						return nil
+					})
+				} else {
+					entries, _ := os.ReadDir(path)
+					for _, entry := range entries {
+						if !entry.IsDir() {
+							allPaths = append(allPaths, filepath.Join(path, entry.Name()))
+						}
+					}
+				}
+			} else {
+				allPaths = append(allPaths, path)
+			}
+		}
+	}
+
+	totalFiles := len(allPaths) // 總檔案數
+	if totalFiles == 0 {
+		fmt.Println(i18n.T("没有文件"))
+		return
+	}
+
+	// 3. 走訪邏輯：支援多種輸入方式（檔案、目錄、萬用字元）
+	for i, path := range allPaths {
 		info, err := os.Stat(path)
-		// 忽略讀取錯誤或目錄物件
 		if err != nil || info.IsDir() {
-			return
+			continue
 		}
 
-		// 呼叫先前定義的函式取得照片時間與來源
 		t, source, err := GetPhotoTime(path)
 		if err != nil {
-			fmt.Printf("%s %s: %s\n", i18n.T("跳过"), i18n.T("文件错误"), path)
-			return
+			fmt.Printf("[%d/%d] %s %s: %s\n", i+1, totalFiles, i18n.T("跳过"), i18n.T("文件错误"), path)
+			continue
 		}
 
 		rawTimeStr := t.Format("2006-01-02 15:04:05")
-		// 根據使用者設定的格式生成新檔名
 		newName := GenerateNewName(conf.Format, t, path, counter)
 
-		// 檢查新檔名是否包含作業系統禁用的非法字元
+		// 检查非法字符
 		if isInvalid, char := ContainsInvalidChars(newName); isInvalid {
-			fmt.Println(i18n.T("非法字符格式", char))
-			fmt.Println(i18n.T("非法字符"))
-			return
+			fmt.Printf("[%d/%d] %s\n", i+1, totalFiles, i18n.T("非法字符格式", char))
+			continue
 		}
 
-		// 組合新路徑與絕對路徑
 		dir := filepath.Dir(path)
 		newPath := filepath.Join(dir, newName)
 		absPath, _ := filepath.Abs(path)
 
-		// 封裝成更名任務計畫
 		plans = append(plans, RenamePlan{
 			OldPath: path,
 			AbsPath: absPath,
@@ -91,47 +120,11 @@ func runRenameMode(files []string) {
 			RawTime: rawTimeStr,
 		})
 
-		// 輸出分析結果到控制台
-		fmt.Printf("[%d] %s: %s\n", len(plans), i18n.T("原文件"), absPath)
+		// 修改后的打印输出：[当前序号/总数]
+		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalFiles), totalFiles, i18n.T("原文件"), absPath)
 		fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), source, rawTimeStr)
-		fmt.Printf("-> %s: %s\n", i18n.T("新文件名"), newName)
-		fmt.Println()
+		fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), newPath)
 		counter++
-	}
-
-	// 3. 走訪邏輯：支援多種輸入方式（檔案、目錄、萬用字元）
-	for _, pattern := range cleanFiles {
-		// 處理萬用字元（例如 *.jpg）
-		matches, _ := filepath.Glob(pattern)
-		for _, path := range matches {
-			info, err := os.Stat(path)
-			if err != nil {
-				continue
-			}
-			// 如果是目錄，根據 recursive 標記決定是否進入子目錄
-			if info.IsDir() {
-				if recursive {
-					// 遞迴走訪目錄下所有子檔案
-					filepath.WalkDir(path, func(p string, d os.DirEntry, err error) error {
-						if err == nil && !d.IsDir() {
-							addFileToPlan(p)
-						}
-						return nil
-					})
-				} else {
-					// 僅處理該目錄下的第一層檔案
-					entries, _ := os.ReadDir(path)
-					for _, entry := range entries {
-						if !entry.IsDir() {
-							addFileToPlan(filepath.Join(path, entry.Name()))
-						}
-					}
-				}
-			} else {
-				// 是一般檔案則直接處理
-				addFileToPlan(path)
-			}
-		}
 	}
 
 	// 若未發現符合條件的檔案，則提示並結束
@@ -145,7 +138,7 @@ func runRenameMode(files []string) {
 	fmt.Println(outLine)
 	if conf.Confirm {
 		// 顯示總計數量並詢問使用者
-		fmt.Printf("%s %s? (y/n): ", i18n.T("共计", len(plans)), i18n.T("确认"))
+		fmt.Printf("%s%s? (y/N): ", i18n.T("共计", len(plans)), i18n.T("确认"))
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(strings.ToLower(input))
@@ -160,14 +153,18 @@ func runRenameMode(files []string) {
 		fmt.Println(i18n.T("开始") + "...")
 		successCount := 0
 		for i, p := range plans {
-			fmt.Printf("[%d] %s: %s\n", i+1, i18n.T("原文件"), p.AbsPath)
+			var totalPlans int = len(plans)
+			fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalPlans), totalPlans, i18n.T("原文件"), p.AbsPath)
+			fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), p.Source, p.RawTime)
 
 			// 檢查檔名是否真的有變動，若無則跳過
 			if p.OldPath == p.NewPath {
-				fmt.Printf("-> %s: %s\n", i18n.T("跳过"), i18n.T("无变化"))
+				fmt.Printf("-> %s : %s\n", i18n.T("跳过"), i18n.T("无变化"))
 				continue
 			}
 
+			// fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), p.NewName)
+			fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), p.NewPath)
 			// 檢查目標路徑是否已經存在檔案，避免覆蓋
 			if _, err := os.Stat(p.NewPath); err == nil {
 				fmt.Println("-> " + i18n.T("重命名失败") + i18n.T("已存在"))
@@ -182,7 +179,8 @@ func runRenameMode(files []string) {
 				fmt.Println("-> " + i18n.T("重命名成功"))
 				successCount++
 			}
-			// fmt.Println("-> " + i18n.T("重命名成功")) //DEBUG
+			// fmt.Println("-> DEBUG MODE") //DEBUG
+			// successCount++                       //DEBUG
 		}
 		// 輸出最終處理結果統計
 		fmt.Println(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans)))
