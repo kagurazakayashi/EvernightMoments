@@ -151,6 +151,8 @@ chmod +x uninstall.sh
 
 [ExifTool](https://github.com/exiftool/exiftool) 是 Phil Harvey 開發的自由開源軟體，專門用於處理影像、影片及音訊的 metadata，只要保持更新該程式，就能為本程式提供最新的相機 RAW 支援和處理更多類型的檔案格式。
 
+如果本程式找到了可用的 ExifTool，會在起始輸出的地方顯示「EXIF 擷取器」的檔案路徑。並且在重新命名的時候，如果 ExifTool 成功取得時間，「時間來源」處會顯示「ExifTool」。
+
 有關 ExifTool 的下載和安裝說明：
 
 #### 使用套件管理員安裝 ExifTool
@@ -276,7 +278,8 @@ chmod +x uninstall.sh
 
 ### 在 Windows 系統中編譯
 
-可以使用 `build.bat` 腳本編譯到各個平台（編譯至 `bin` 資料夾中）。
+1. 使用 `mdhtml.bat` 建立說明文件（建立至 `readme` 資料夾）。
+2. 使用 `build.bat` 編譯至各個平台（編譯至 `bin` 資料夾）。
 
 #### 測試
 

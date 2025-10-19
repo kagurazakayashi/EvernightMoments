@@ -1,3 +1,5 @@
+![icon](ico/icon.ico)
+
 # [EvernightMoments](https://github.com/kagurazakayashi/EvernightMoments)
 
 [English](README.md) | [简体中文](README.zh-Hans.md) | [繁體中文](README.zh-Hant.md) | **日本語**
@@ -149,6 +151,8 @@ chmod +x uninstall.sh
 
 [ExifTool](https://github.com/exiftool/exiftool) は Phil Harvey 氏によって開発されたフリーでオープンソースのソフトウェアであり、画像、動画、音声のメタデータ処理に特化しています。このプログラムを最新の状態に保つことで、本プログラムに最新のカメラ RAW サポートを提供し、より多くの種類のファイルフォーマットを処理できるようになります。
 
+本プログラムが利用可能な ExifTool を検出した場合、開始時の出力に「EXIF エクストラクター」のファイルパスが表示されます。また、リネーム時に ExifTool が正常に日時を取得できた場合、「時間ソース」の項目に「ExifTool」と表示されます。
+
 ExifTool のダウンロードおよびインストール手順について：
 
 #### パッケージマネージャーを使用した ExifTool のインストール
@@ -275,7 +279,8 @@ ExifTool のダウンロードおよびインストール手順について：
 
 ### Windows システムでのコンパイル
 
-`build.bat` スクリプトを使用して、各プラットフォーム向けにコンパイルできます（`bin` フォルダに出力されます）。
+1. `mdhtml.bat` を使用してヘルプドキュメントを作成します（`readme` フォルダ内に作成されます）。
+2. `build.bat` を使用して各プラットフォーム向けにビルドします（`bin` フォルダ内に出力されます）。
 
 #### テスト
 

@@ -3,7 +3,7 @@ SET PNAME=EvernightMoments
 SET VERSION=1.2.0
 RD /S /Q bin
 MD bin
-COPY README.md bin\
+COPY readme\*.html bin\
 SET CGO_ENABLED=0
 
 go generate
@@ -13,19 +13,19 @@ ECHO Compiling Windows x86
 SET GOARCH=386
 MD bin\%PNAME%_windows-x86
 go build -o bin\%PNAME%_windows-x86\%NAME%.exe
-COPY README.md bin\%PNAME%_windows-x86\
+COPY readme\*.html bin\%PNAME%_windows-x86\
 
 ECHO Compiling Windows x64
 SET GOARCH=amd64
 MD bin\%PNAME%_windows-x64
 go build -o bin\%PNAME%_windows-x64\%NAME%.exe
-COPY README.md bin\%PNAME%_windows-x64\
+COPY readme\*.html bin\%PNAME%_windows-x64\
 
 ECHO Compiling Windows ARM64
 SET GOARCH=arm64
 MD bin\%PNAME%_windows-arm64
 go build -o bin\%PNAME%_windows-arm64\%NAME%.exe
-COPY README.md bin\%PNAME%_windows-arm64\
+COPY readme\*.html bin\%PNAME%_windows-arm64\
 
 DEL /Q *.syso
 SET GOOS=darwin
@@ -33,7 +33,7 @@ SET GOOS=darwin
 ECHO Compiling macOS x64
 SET GOARCH=amd64
 go build -o bin\%PNAME%_macos-x64\%NAME%
-COPY README.md bin\%PNAME%_macos-x64\
+COPY readme\*.html bin\%PNAME%_macos-x64\
 COPY ico\icon.icns bin\%PNAME%_macos-x64\%NAME%.icns
 COPY install-mac.sh bin\%PNAME%_macos-x64\
 COPY uninstall-mac.sh bin\%PNAME%_macos-x64\
@@ -41,7 +41,7 @@ COPY uninstall-mac.sh bin\%PNAME%_macos-x64\
 ECHO Compiling macOS ARM64
 SET GOARCH=arm64
 go build -o bin\%PNAME%_macos-arm64\%NAME%
-COPY README.md bin\%PNAME%_macos-arm64\
+COPY readme\*.html bin\%PNAME%_macos-arm64\
 COPY ico\icon.icns bin\%PNAME%_macos-arm64\%NAME%.icns
 COPY install-mac.sh bin\%PNAME%_macos-arm64\
 COPY uninstall-mac.sh bin\%PNAME%_macos-arm64\
@@ -52,7 +52,7 @@ ECHO Compiling Linux x86
 SET GOARCH=386
 MD bin\%PNAME%_linux-x86
 go build -o bin\%PNAME%_linux-x86\%NAME%
-COPY README.md bin\%PNAME%_linux-x86\
+COPY readme\*.html bin\%PNAME%_linux-x86\
 COPY ico\icon.png bin\%PNAME%_linux-x86\%NAME%.png
 COPY install.sh bin\%PNAME%_linux-x86\
 COPY uninstall.sh bin\%PNAME%_linux-x86\
@@ -61,7 +61,7 @@ ECHO Compiling Linux x64
 SET GOARCH=amd64
 MD bin\%PNAME%_linux-x64
 go build -o bin\%PNAME%_linux-x64\%NAME%
-COPY README.md bin\%PNAME%_linux-x64\
+COPY readme\*.html bin\%PNAME%_linux-x64\
 COPY ico\icon.png bin\%PNAME%_linux-x64\%NAME%.png
 COPY install.sh bin\%PNAME%_linux-x64\
 COPY uninstall.sh bin\%PNAME%_linux-x64\
@@ -70,7 +70,7 @@ ECHO Compiling Linux ARM32
 SET GOARCH=arm
 MD bin\%PNAME%_linux-arm32
 go build -o bin\%PNAME%_linux-arm32\%NAME%
-COPY README.md bin\%PNAME%_linux-arm32\
+COPY readme\*.html bin\%PNAME%_linux-arm32\
 COPY ico\icon.png bin\%PNAME%_linux-arm32\%NAME%.png
 COPY install.sh bin\%PNAME%_linux-arm32\
 COPY uninstall.sh bin\%PNAME%_linux-arm32\
@@ -79,7 +79,7 @@ ECHO Compiling Linux ARM64
 SET GOARCH=arm64
 MD bin\%PNAME%_linux-arm64
 go build -o bin\%PNAME%_linux-arm64\%NAME%
-COPY README.md bin\%PNAME%_linux-arm64\
+COPY readme\*.html bin\%PNAME%_linux-arm64\
 COPY ico\icon.png bin\%PNAME%_linux-arm64\%NAME%.png
 COPY install.sh bin\%PNAME%_linux-arm64\
 COPY uninstall.sh bin\%PNAME%_linux-arm64\

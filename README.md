@@ -151,6 +151,8 @@ The built-in EXIF parser for this program is [goexif](https://github.com/rwcarls
 
 [ExifTool](https://github.com/exiftool/exiftool) is a free and open-source software developed by Phil Harvey, specifically designed for reading, writing, and editing metadata in images, videos, and audio. By keeping this tool updated, you can equip this program with the latest RAW camera support and the ability to process more file formats.
 
+If the program finds a valid ExifTool, the file path of the "EXIF Extractor" will be displayed in the startup output. Additionally, during the renaming process, if ExifTool successfully retrieves the timestamp, "ExifTool" will be shown as the "Time Source."
+
 Regarding the download and installation instructions for ExifTool:
 
 #### Install ExifTool using a Package Manager
@@ -180,7 +182,7 @@ First, go to the [ExifTool Homepage](https://github.com/exiftool/exiftool) to do
 ### Using the Windows GUI
 
 - In **File Explorer**, you can drag and drop one or more **photo files** or **folders containing only photos** directly onto this .exe file to start the renaming process.
-- You can also use it via the "Send to" menu; see [Installing on Windows](#installing-on-windows).
+- You can also use it via the "Send to" menu; see [Installation on Windows](#installation-on-windows).
 
 ### General Commands
 
@@ -270,7 +272,8 @@ First, install [Go](https://go.dev/). The version must be `1.26.0` or higher.
 
 ### Compiling on Windows
 
-You can use the `build.bat` script to compile for various platforms (output to the `bin` folder).
+1. Use `mdhtml.bat` to create help documentation (output to the `readme` folder).
+2. Use `build.bat` to compile for various platforms (output to the `bin` folder).
 
 #### Testing
 
