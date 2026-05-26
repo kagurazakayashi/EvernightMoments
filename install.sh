@@ -5,19 +5,19 @@
 # ==============================================================================
 APP_NAME="EvernightMoments"
 BIN_SOURCE="EvernightMoments"
-CONFIG_SOURCE="EvernightMoments.json"
 ICON_SOURCE="EvernightMoments.png"
 
 # User-specific Local Paths (XDG Standard)
 BIN_DEST_DIR="$HOME/.local/bin"
 ICON_DEST_DIR="$HOME/.local/share/icons"
 MENU_DEST_DIR="$HOME/.local/share/applications"
+CONFIG_DEST_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/$APP_NAME"
 
 # Target File Paths
 BIN_DEST="$BIN_DEST_DIR/$APP_NAME"
-CONFIG_DEST="$BIN_DEST_DIR/$CONFIG_SOURCE"
 ICON_DEST="$ICON_DEST_DIR/$ICON_SOURCE"
 MENU_DEST="$MENU_DEST_DIR/$APP_NAME.desktop"
+CONFIG_DEST="$CONFIG_DEST_DIR/config.json"
 
 echo "------------------------------------------------------------"
 echo "Starting Installation for $APP_NAME on Linux"
@@ -26,8 +26,8 @@ echo "------------------------------------------------------------"
 # ==============================================================================
 # 1. DIRECTORY PREPARATION
 # ==============================================================================
-echo "[Step 1/7] Preparing directories..."
-for dir in "$BIN_DEST_DIR" "$ICON_DEST_DIR" "$MENU_DEST_DIR"; do
+echo "[Step 1/6] Preparing directories..."
+for dir in "$BIN_DEST_DIR" "$ICON_DEST_DIR" "$MENU_DEST_DIR" "$CONFIG_DEST_DIR"; do
     if [ ! -d "$dir" ]; then
         echo "Creating directory: $dir"
         mkdir -p "$dir"
@@ -47,9 +47,9 @@ if [[ ! -f "$BIN_SOURCE" ]]; then
 fi
 
 # ==============================================================================
-# 2. INSTALL BINARY AND CONFIG
+# 2. INSTALL BINARY
 # ==============================================================================
-echo "[Step 2/7] Installing files to local bin..."
+echo "[Step 2/6] Installing binary to local bin..."
 
 echo "Copying binary:"
 echo "  From: ./$BIN_SOURCE"
@@ -57,18 +57,10 @@ echo "  To:   $BIN_DEST"
 cp "$BIN_SOURCE" "$BIN_DEST"
 chmod 755 "$BIN_DEST"
 
-if [[ -f "$CONFIG_SOURCE" ]]; then
-    echo "Copying configuration:"
-    echo "  From: ./$CONFIG_SOURCE"
-    echo "  To:   $CONFIG_DEST"
-    cp "$CONFIG_SOURCE" "$CONFIG_DEST"
-    chmod 644 "$CONFIG_DEST"
-fi
-
 # ==============================================================================
 # 3. INSTALL ICON
 # ==============================================================================
-echo "[Step 3/7] Installing application icon..."
+echo "[Step 3/6] Installing application icon..."
 if [[ -f "$ICON_SOURCE" ]]; then
     echo "Copying icon:"
     echo "  From: ./$ICON_SOURCE"
@@ -82,7 +74,7 @@ fi
 # ==============================================================================
 # 4. CREATE DESKTOP ENTRY
 # ==============================================================================
-echo "[Step 4/7] Generating .desktop entry..."
+echo "[Step 4/6] Generating .desktop entry..."
 TMP_DESKTOP="/tmp/$APP_NAME.desktop"
 
 cat <<EOF > "$TMP_DESKTOP"
@@ -111,7 +103,7 @@ update-desktop-database "$MENU_DEST_DIR" 2>/dev/null
 # ==============================================================================
 # 5. CREATE DESKTOP SHORTCUT
 # ==============================================================================
-echo "[Step 5/7] Creating desktop shortcut..."
+echo "[Step 5/6] Creating desktop shortcut..."
 USER_SHORTCUT="$USER_DESKTOP/$APP_NAME.desktop"
 
 echo "Creating shortcut:"
@@ -123,7 +115,7 @@ chmod +x "$USER_SHORTCUT"
 # ==============================================================================
 # 6. SHELL PATH CONFIGURATION
 # ==============================================================================
-echo "[Step 6/7] Checking Environment PATH..."
+echo "[Step 6/6] Checking Environment PATH..."
 CURRENT_SHELL=$(basename "$SHELL")
 PATH_LINE="export PATH=\"\$HOME/.local/bin:\$PATH\""
 CONF_FILE=""
@@ -161,6 +153,7 @@ echo "------------------------------------------------------------"
 echo "INSTALLATION COMPLETE"
 echo "------------------------------------------------------------"
 echo "Binary Path:      $BIN_DEST"
+echo "Config Path:      $CONFIG_DEST"
 echo "Icon Path:        $ICON_DEST"
 echo "Menu Entry:       $MENU_DEST"
 echo "Desktop Link:     $USER_SHORTCUT"

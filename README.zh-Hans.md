@@ -100,7 +100,7 @@ chmod +x install.sh
   - 将命令添加到 `~/.local/bin` 文件夹中以便在终端中随时使用。
     - 如果 `~/.local/bin` 不在 `PATH` 环境变量中，则会尝试自动添加。
 - **注意：部分操作系统会拒绝没有签名的程序运行**，你需要允许没有签名的程序运行才能使用本程序。通常在图形画面下，如果被系统拒绝运行，可以看到弹框提示。
-- 程序的配置将存储到 `~/.local/bin/EvernightMoments.json` 。
+- 程序的配置将存储到 `~/.config/EvernightMoments/config.json` 。
 
 #### 在 Linux 上卸载
 
@@ -133,7 +133,7 @@ chmod +x install.sh
     - 如果 `~/.local/bin` 不在 `PATH` 环境变量中，则会尝试自动添加。
 - **注意：系统可能会拒绝没有签名的程序运行**，你需要允许没有签名的程序运行才能使用本程序。
   - 如果遇到阻止，请前往“系统设置”中的“隐私和安全性”，滚动到末端，找到“允许”按钮并点击。
-- 程序的配置将存储到 `~/.local/bin/EvernightMoments.json` 。
+- 程序的配置将存储到 `~/Library/Application Support/EvernightMoments/config.json` 。
 
 #### 在 macOS 上卸载
 

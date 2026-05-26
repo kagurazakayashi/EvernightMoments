@@ -100,7 +100,7 @@ chmod +x install.sh
   - 將指令新增至 `~/.local/bin` 資料夾中，以便在終端機裡隨時使用。
     - 如果 `~/.local/bin` 不在 `PATH` 環境變數中，則會嘗試自動加入。
 - **注意：部分作業系統會拒絕未經簽署的程式執行**，您需要允許未經簽署的程式執行才能使用本程式。通常在圖形介面下，如果被系統拒絕執行，會看到彈出視窗提示。
-- 程式的設定將儲存至 `~/.local/bin/EvernightMoments.json`。
+- 程式的設定將儲存至 `~/.config/EvernightMoments/config.json`。
 
 #### 在 Linux 上解除安裝
 
@@ -133,7 +133,7 @@ chmod +x install.sh
     - 如果 `~/.local/bin` 不在 `PATH` 環境變數中，則會嘗試自動加入。
 - **注意：系統可能會拒絕未經簽署的程式執行**，您需要允許未經簽署的程式執行才能使用本程式。
   - 如果遇到阻擋，請前往「系統設定」中的「隱私權與安全性」，捲動到最底部，找到「強制打開」或「允許」按鈕並點擊。
-- 程式的設定將儲存至 `~/.local/bin/EvernightMoments.json`。
+- 程式的設定將儲存至 `~/Library/Application Support/EvernightMoments/config.json`。
 
 #### 在 macOS 上解除安裝
 

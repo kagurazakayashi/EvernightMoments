@@ -4,19 +4,20 @@
 # CONFIGURATION
 # ==============================================================================
 APP_NAME="EvernightMoments"
-CONFIG_SOURCE="EvernightMoments.json"
 ICON_SOURCE="EvernightMoments.png"
 
 # User-specific Local Paths
 BIN_DEST_DIR="$HOME/.local/bin"
 ICON_DEST_DIR="$HOME/.local/share/icons"
 MENU_DEST_DIR="$HOME/.local/share/applications"
+CONFIG_DEST_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/$APP_NAME"
 
 # Target File Paths
 BIN_DEST="$BIN_DEST_DIR/$APP_NAME"
-CONFIG_DEST="$BIN_DEST_DIR/$CONFIG_SOURCE"
 ICON_DEST="$ICON_DEST_DIR/$ICON_SOURCE"
 MENU_DEST="$MENU_DEST_DIR/$APP_NAME.desktop"
+CONFIG_LEGACY="$BIN_DEST_DIR/$APP_NAME.json"
+CONFIG_DEST="$CONFIG_DEST_DIR/config.json"
 
 echo "------------------------------------------------------------"
 echo "Starting Uninstallation for $APP_NAME on Linux"
@@ -82,12 +83,21 @@ else
 fi
 
 if [ -f "$CONFIG_DEST" ]; then
-    echo "Deleting configuration:"
+    echo "Deleting configuration (standard):"
     echo "  Target: $CONFIG_DEST"
     rm -f "$CONFIG_DEST"
     echo "  Status: Removed"
 else
-    echo "  Status: Configuration not found"
+    echo "  Status: Standard configuration not found"
+fi
+
+if [ -f "$CONFIG_LEGACY" ]; then
+    echo "Deleting configuration (legacy):"
+    echo "  Target: $CONFIG_LEGACY"
+    rm -f "$CONFIG_LEGACY"
+    echo "  Status: Removed"
+else
+    echo "  Status: Legacy configuration not found"
 fi
 
 # ==============================================================================

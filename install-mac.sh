@@ -5,18 +5,18 @@
 # ==============================================================================
 APP_NAME="EvernightMoments"
 BIN_SOURCE="EvernightMoments"
-CONFIG_SOURCE="EvernightMoments.json"
 ICON_SOURCE="EvernightMoments.icns"
 
 # User-specific Local Paths
 BIN_DEST_DIR="$HOME/.local/bin"
 APP_DEST_DIR="$HOME/Applications"
 SHORTCUT="/Applications"
+CONFIG_DEST_DIR="$HOME/Library/Application Support/$APP_NAME"
 
 # Target File Paths
 BIN_DEST="$BIN_DEST_DIR/$APP_NAME"
-CONFIG_DEST="$BIN_DEST_DIR/$CONFIG_SOURCE"
 APP_BUNDLE="$APP_DEST_DIR/$APP_NAME Config.app"
+CONFIG_DEST="$CONFIG_DEST_DIR/config.json"
 
 echo "------------------------------------------------------------"
 echo "Starting Installation for $APP_NAME on macOS"
@@ -25,8 +25,8 @@ echo "------------------------------------------------------------"
 # ==============================================================================
 # 1. DIRECTORY PREPARATION
 # ==============================================================================
-echo "[Step 1/6] Preparing directories..."
-for dir in "$BIN_DEST_DIR" "$APP_DEST_DIR"; do
+echo "[Step 1/5] Preparing directories..."
+for dir in "$BIN_DEST_DIR" "$APP_DEST_DIR" "$CONFIG_DEST_DIR"; do
     if [ ! -d "$dir" ]; then
         echo "Creating directory: $dir"
         mkdir -p "$dir"
@@ -42,9 +42,9 @@ if [[ ! -f "$BIN_SOURCE" ]]; then
 fi
 
 # ==============================================================================
-# 2. INSTALL BINARY AND CONFIG
+# 2. INSTALL BINARY
 # ==============================================================================
-echo "[Step 2/6] Installing files to local bin..."
+echo "[Step 2/5] Installing binary to local bin..."
 
 echo "Copying binary:"
 echo "  From: ./$BIN_SOURCE"
@@ -52,20 +52,10 @@ echo "  To:   $BIN_DEST"
 cp "$BIN_SOURCE" "$BIN_DEST"
 chmod 755 "$BIN_DEST"
 
-if [[ -f "$CONFIG_SOURCE" ]]; then
-    echo "Copying configuration:"
-    echo "  From: ./$CONFIG_SOURCE"
-    echo "  To:   $CONFIG_DEST"
-    cp "$CONFIG_SOURCE" "$CONFIG_DEST"
-    chmod 644 "$CONFIG_DEST"
-else
-    echo "Notice: No config file found at ./$CONFIG_SOURCE, skipping."
-fi
-
 # ==============================================================================
 # 3. CREATE APP BUNDLE (Terminal Wrapper)
 # ==============================================================================
-echo "[Step 3/6] Creating macOS App Bundle..."
+echo "[Step 3/5] Creating macOS App Bundle..."
 echo "Target App Bundle: $APP_BUNDLE"
 
 # osacompile creates a native .app that runs the binary via Terminal
@@ -85,7 +75,7 @@ fi
 # ==============================================================================
 # 4. INSTALL ICON
 # ==============================================================================
-echo "[Step 4/6] Applying custom icon..."
+echo "[Step 4/5] Applying custom icon..."
 APP_ICON_DEST="$APP_BUNDLE/Contents/Resources/applet.icns"
 
 if [[ -f "$ICON_SOURCE" ]]; then
@@ -104,7 +94,7 @@ fi
 # ==============================================================================
 # 5. CREATE DESKTOP SHORTCUT
 # ==============================================================================
-echo "[Step 5/6] Creating desktop shortcut..."
+echo "[Step 5/5] Creating desktop shortcut..."
 USER_SHORTCUT="$SHORTCUT/$APP_NAME Config.app"
 
 echo "Creating symlink:"
@@ -115,7 +105,7 @@ ln -sf "$APP_BUNDLE" "$USER_SHORTCUT"
 # ==============================================================================
 # 6. SHELL PATH CONFIGURATION
 # ==============================================================================
-echo "[Step 6/6] Checking Environment PATH..."
+echo "[Shell] Checking Environment PATH..."
 CURRENT_SHELL=$(basename "$SHELL")
 PATH_LINE="export PATH=\"\$HOME/.local/bin:\$PATH\""
 CONF_FILE=""

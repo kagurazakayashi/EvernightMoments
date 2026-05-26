@@ -100,7 +100,7 @@ chmod +x install.sh
   - Add the command to the `~/.local/bin` folder so it can be easily accessed in the terminal at any time.
     - If `~/.local/bin` is not in your `PATH` environment variable, it will attempt to add it automatically.
 - **Note: Some operating systems will block unsigned programs from running.** You need to allow unsigned programs to execute in order to use this program. Generally, in a graphical environment, you will see a popup alert if it is blocked by the system.
-- The program's configuration will be stored in `~/.local/bin/EvernightMoments.json`.
+- The program's configuration will be stored in `~/.config/EvernightMoments/config.json`.
 
 #### Uninstallation on Linux
 
@@ -133,7 +133,7 @@ chmod +x install.sh
     - If `~/.local/bin` is not in your `PATH` environment variable, it will attempt to add it automatically.
 - **Note: The system might block unsigned programs from running.** You need to allow unsigned programs to execute in order to use this program.
   - If blocked, please go to "Privacy & Security" in "System Settings", scroll down to the bottom, find the "Allow" (or "Open Anyway") button, and click it.
-- The program's configuration will be stored in `~/.local/bin/EvernightMoments.json`.
+- The program's configuration will be stored in `~/Library/Application Support/EvernightMoments/config.json`.
 
 #### Uninstallation on macOS
 

@@ -4,18 +4,19 @@
 # CONFIGURATION
 # ==============================================================================
 APP_NAME="EvernightMoments"
-CONFIG_SOURCE="EvernightMoments.json"
 
 # User-specific Local Paths
 BIN_DEST_DIR="$HOME/.local/bin"
 APP_DEST_DIR="$HOME/Applications"
 SHORTCUT="/Applications"
+CONFIG_DEST_DIR="$HOME/Library/Application Support/$APP_NAME"
 
 # Target File Paths
 BIN_DEST="$BIN_DEST_DIR/$APP_NAME"
-CONFIG_DEST="$BIN_DEST_DIR/$CONFIG_SOURCE"
 APP_BUNDLE="$APP_DEST_DIR/$APP_NAME Config.app"
 USER_SHORTCUT="$SHORTCUT/$APP_NAME Config.app"
+CONFIG_LEGACY="$BIN_DEST_DIR/$APP_NAME.json"
+CONFIG_DEST="$CONFIG_DEST_DIR/config.json"
 
 echo "------------------------------------------------------------"
 echo "Starting Uninstallation for $APP_NAME on macOS"
@@ -62,12 +63,21 @@ else
 fi
 
 if [ -f "$CONFIG_DEST" ]; then
-    echo "Deleting configuration:"
+    echo "Deleting configuration (standard):"
     echo "  Target: $CONFIG_DEST"
     rm -f "$CONFIG_DEST"
     echo "  Status: Removed"
 else
-    echo "  Status: Configuration not found"
+    echo "  Status: Standard configuration not found"
+fi
+
+if [ -f "$CONFIG_LEGACY" ]; then
+    echo "Deleting configuration (legacy):"
+    echo "  Target: $CONFIG_LEGACY"
+    rm -f "$CONFIG_LEGACY"
+    echo "  Status: Removed"
+else
+    echo "  Status: Legacy configuration not found"
 fi
 
 # ==============================================================================

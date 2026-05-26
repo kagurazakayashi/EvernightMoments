@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -15,28 +16,73 @@ type Config struct {
 	EndPause bool   `json:"endpause"` // 程式結束後是否暫停（避免視窗直接關閉）
 }
 
-// getConfigPath 根據目前執行檔的名稱與位置，自動推導設定檔 (.json) 的路徑
-func getConfigPath() string {
-	// 取得目前執行檔的完整路徑
+// getConfigDir 根據作業系統回傳標準的設定檔目錄路徑
+func getConfigDir() string {
+	var base string
+	switch runtime.GOOS {
+	case "windows":
+		base = os.Getenv("APPDATA")
+		if base == "" {
+			home, _ := os.UserHomeDir()
+			base = filepath.Join(home, "AppData", "Roaming")
+		}
+	case "darwin":
+		home, _ := os.UserHomeDir()
+		base = filepath.Join(home, "Library", "Application Support")
+	default: // linux, freebsd 等遵循 XDG 規範的系統
+		base = os.Getenv("XDG_CONFIG_HOME")
+		if base == "" {
+			home, _ := os.UserHomeDir()
+			base = filepath.Join(home, ".config")
+		}
+	}
+	return filepath.Join(base, evernightMoments)
+}
+
+// getLegacyConfigPath 回傳舊版（與執行檔同目錄）的設定檔路徑
+func getLegacyConfigPath() string {
 	exePath, err := os.Executable()
 	if err != nil {
-		// 若無法取得路徑，則回傳目前目錄下的預設檔名
 		return "config.json"
 	}
-
-	// 取得執行檔所在的目錄
 	dir := filepath.Dir(exePath)
-	// 取得執行檔檔名（包含副檔名）
 	base := filepath.Base(exePath)
-	// 去除執行檔的副檔名（例如 .exe），取得純檔名
 	name := strings.TrimSuffix(base, filepath.Ext(base))
-
-	// 將目錄、純檔名與 .json 副檔名組合起來
 	return filepath.Join(dir, name+".json")
+}
+
+// getConfigPath 回傳標準位置的設定檔完整路徑
+func getConfigPath() string {
+	configDir := getConfigDir()
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		return "config.json"
+	}
+	return filepath.Join(configDir, "config.json")
+}
+
+// migrateConfig 若標準位置尚無設定檔，但舊版位置存在，則自動遷移
+func migrateConfig() {
+	newPath := getConfigPath()
+	if _, err := os.Stat(newPath); err == nil {
+		return
+	}
+
+	legacyPath := getLegacyConfigPath()
+	data, err := os.ReadFile(legacyPath)
+	if err != nil {
+		return
+	}
+
+	configDir := filepath.Dir(newPath)
+	os.MkdirAll(configDir, 0755)
+	os.WriteFile(newPath, data, 0644)
 }
 
 // LoadConfig 從硬碟讀取設定檔，若檔案不存在或解析出錯則回傳預設值
 func LoadConfig() Config {
+	// 若舊版設定檔存在而新版尚無，自動遷移
+	migrateConfig()
+
 	configPath := getConfigPath()
 
 	// 讀取檔案內容
