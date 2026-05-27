@@ -10,10 +10,12 @@ import (
 
 // Config 定義了應用程式的設定結構
 type Config struct {
-	Language string `json:"language"` // 介面語言設定
-	Format   string `json:"format"`   // 輸出格式
-	Confirm  bool   `json:"confirm"`  // 是否在執行前顯示確認預覽
-	EndPause bool   `json:"endpause"` // 程式結束後是否暫停（避免視窗直接關閉）
+	Language string   `json:"language"`          // 介面語言設定
+	Format   string   `json:"format"`            // 輸出格式
+	Exclude  []string `json:"exclude,omitempty"` // 排除的副檔名樣式，例如 ["*.xml", "*.txt"]
+	Sync     []string `json:"sync,omitempty"`    // 同步更名的副檔名樣式，例如 ["*.txt", "*.xmp"]
+	Confirm  bool     `json:"confirm"`           // 是否在執行前顯示確認預覽
+	EndPause bool     `json:"endpause"`          // 程式結束後是否暫停（避免視窗直接關閉）
 }
 
 // getConfigDir 根據作業系統回傳標準的設定檔目錄路徑
@@ -120,4 +122,35 @@ func SaveConfig(conf Config, configPath string) error {
 
 	// 將 JSON 資料寫入檔案，權限設定為 0644 (擁有者可讀寫，其餘人唯讀)
 	return os.WriteFile(configPath, data, 0644)
+}
+
+// formatSlice 將字串切片格式化為逗號分隔的顯示字串，若為空則回傳「(無)」
+func formatSlice(s []string) string {
+	if len(s) == 0 {
+		return "(none)"
+	}
+	return strings.Join(s, ", ")
+}
+
+// parsePatterns 將使用者輸入的逗號分隔字串解析為去除空白後的樣式切片
+func parsePatterns(input string) []string {
+	parts := strings.Split(input, ",")
+	var result []string
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			result = append(result, p)
+		}
+	}
+	return result
+}
+
+// matchesAnyPattern 檢查 filename 是否符合 patterns 中的任一 glob 樣式
+func matchesAnyPattern(filename string, patterns []string) bool {
+	for _, pattern := range patterns {
+		if matched, _ := filepath.Match(pattern, filename); matched {
+			return true
+		}
+	}
+	return false
 }

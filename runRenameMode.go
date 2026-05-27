@@ -18,6 +18,11 @@ type RenamePlan struct {
 	RawTime string // 格式化後的原始時間字串
 }
 
+// renameEntry 記錄主檔案更名後的基底名稱（不含副檔名），供同步檔案匹配使用
+type renameEntry struct {
+	newBase string // 更名後不含副檔名的基底名稱
+}
+
 // runRenameMode 執行更名模式的完整流程
 // 參數 files 是從命令列傳入的檔案或目錄路徑清單
 func runRenameMode(files []string) {
@@ -79,14 +84,31 @@ func runRenameMode(files []string) {
 		}
 	}
 
-	totalFiles := len(allPaths) // 總檔案數
+	// 3. 根據排除與同步設定，將檔案分為主要檔案與同步檔案
+	var primaryPaths []string
+	var syncPaths []string
+	for _, path := range allPaths {
+		filename := filepath.Base(path)
+		if matchesAnyPattern(filename, conf.Exclude) {
+			continue
+		}
+		if matchesAnyPattern(filename, conf.Sync) {
+			syncPaths = append(syncPaths, path)
+		} else {
+			primaryPaths = append(primaryPaths, path)
+		}
+	}
+
+	totalFiles := len(primaryPaths) + len(syncPaths)
 	if totalFiles == 0 {
 		fmt.Println(i18n.T("没有文件"))
 		return
 	}
 
-	// 3. 走訪邏輯：支援多種輸入方式（檔案、目錄、萬用字元）
-	for i, path := range allPaths {
+	// 4. 先處理主要檔案：生成更名計劃並建立名稱對照表
+	renameMap := make(map[string]renameEntry)
+
+	for i, path := range primaryPaths {
 		info, err := os.Stat(path)
 		if err != nil || info.IsDir() {
 			continue
@@ -101,7 +123,6 @@ func runRenameMode(files []string) {
 		rawTimeStr := t.Format("2006-01-02 15:04:05")
 		newName := GenerateNewName(conf.Format, t, path, counter)
 
-		// 检查非法字符
 		if isInvalid, char := ContainsInvalidChars(newName); isInvalid {
 			fmt.Printf("[%d/%d] %s\n", i+1, totalFiles, i18n.T("非法字符格式", char))
 			continue
@@ -120,11 +141,47 @@ func runRenameMode(files []string) {
 			RawTime: rawTimeStr,
 		})
 
-		// 修改后的打印输出：[当前序号/总数]
+		// 記錄主檔案的舊基底名稱 → 新基底名稱對照
+		oldBase := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+		newBase := strings.TrimSuffix(newName, filepath.Ext(newName))
+		renameMap[filepath.Join(dir, oldBase)] = renameEntry{newBase: newBase}
+
 		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalFiles), totalFiles, i18n.T("原文件"), absPath)
 		fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), source, rawTimeStr)
 		fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), newPath)
 		counter++
+	}
+
+	// 5. 處理同步檔案：依照主檔案的更名結果同步更名
+	syncIdx := len(primaryPaths)
+	for _, syncPath := range syncPaths {
+		dir := filepath.Dir(syncPath)
+		syncExt := filepath.Ext(syncPath)
+		syncBase := strings.TrimSuffix(filepath.Base(syncPath), syncExt)
+
+		entry, ok := renameMap[filepath.Join(dir, syncBase)]
+		if !ok {
+			// 找不到對應的主檔案，跳過
+			continue
+		}
+
+		syncIdx++
+		newName := entry.newBase + syncExt
+		newPath := filepath.Join(dir, newName)
+		absPath, _ := filepath.Abs(syncPath)
+
+		plans = append(plans, RenamePlan{
+			OldPath: syncPath,
+			AbsPath: absPath,
+			NewPath: newPath,
+			NewName: newName,
+			Source:  i18n.T("同步依据"),
+			RawTime: "-",
+		})
+
+		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(syncIdx, totalFiles), totalFiles, i18n.T("原文件"), absPath)
+		fmt.Printf("-> %s: %s\n", i18n.T("同步依据"), syncPath)
+		fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), newPath)
 	}
 
 	// 若未發現符合條件的檔案，則提示並結束
@@ -133,22 +190,20 @@ func runRenameMode(files []string) {
 		return
 	}
 
-	// 4. 使用者確認邏輯：根據設定決定是否顯示預覽確認
+	// 6. 使用者確認邏輯：根據設定決定是否顯示預覽確認
 	proceed := true
 	fmt.Println(outLine)
 	if conf.Confirm {
-		// 顯示總計數量並詢問使用者
 		fmt.Printf("%s%s? (y/N): ", i18n.T("共计", len(plans)), i18n.T("确认"))
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(strings.ToLower(input))
-		// 使用者必須輸入 'y' 或 'yes' 才會繼續執行
 		if input != "y" && input != "yes" {
 			proceed = false
 		}
 	}
 
-	// 5. 正式執行檔案更名作業
+	// 7. 正式執行檔案更名作業
 	if proceed {
 		fmt.Println(i18n.T("开始") + "...")
 		successCount := 0
@@ -157,21 +212,17 @@ func runRenameMode(files []string) {
 			fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalPlans), totalPlans, i18n.T("原文件"), p.AbsPath)
 			fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), p.Source, p.RawTime)
 
-			// 檢查檔名是否真的有變動，若無則跳過
 			if p.OldPath == p.NewPath {
 				fmt.Printf("-> %s : %s\n", i18n.T("跳过"), i18n.T("无变化"))
 				continue
 			}
 
-			// fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), p.NewName)
 			fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), p.NewPath)
-			// 檢查目標路徑是否已經存在檔案，避免覆蓋
 			if _, err := os.Stat(p.NewPath); err == nil {
 				fmt.Println("-> " + i18n.T("重命名失败") + i18n.T("已存在"))
 				continue
 			}
 
-			// 執行實體檔案更名
 			err := os.Rename(p.OldPath, p.NewPath)
 			if err != nil {
 				fmt.Printf("-> %s: %v\n", i18n.T("重命名失败"), err)
@@ -179,16 +230,12 @@ func runRenameMode(files []string) {
 				fmt.Println("-> " + i18n.T("重命名成功"))
 				successCount++
 			}
-			// fmt.Println("-> DEBUG MODE") //DEBUG
-			// successCount++                       //DEBUG
 		}
-		// 輸出最終處理結果統計
 		fmt.Println(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans)))
 	} else {
 		fmt.Println(i18n.T("取消"))
 	}
 
-	// 根據設定決定是否在視窗關閉前暫停
 	if conf.EndPause {
 		EndPause()
 	}

@@ -59,9 +59,9 @@ func runConfigMode() {
 	fmt.Println(outLine)
 	fmt.Println(i18n.T("软件配置"))
 
-	// --- 設定 1/3：命名格式 ---
+	// --- 設定 1/5：命名格式 ---
 	fmt.Println(outLine)
-	fmt.Println("(1/3) " + i18n.T("配置文件名命名格式"))
+	fmt.Println("(1/5) " + i18n.T("配置文件名命名格式"))
 	fmt.Println(i18n.T("当前格式") + ": " + conf.Format)
 	fmt.Println(i18n.T("可用变量"))
 
@@ -100,9 +100,37 @@ func runConfigMode() {
 	exampleName = GenerateNewName(conf.Format, time.Now(), "Photo.jpg", 1)
 	fmt.Printf("-> "+i18n.T("示例输出")+": %s\n", exampleName)
 
-	// --- 設定 2/3：確認預覽開關 ---
+	// --- 設定 2/5：排除副檔名 ---
 	fmt.Println(outLine)
-	fmt.Println("(2/3) " + i18n.T("询问预览"))
+	fmt.Println("(2/5) " + i18n.T("排除项配置"))
+	fmt.Println(i18n.T("当前排除项") + ": " + formatSlice(conf.Exclude))
+	fmt.Println(i18n.T("排除项说明"))
+	fmt.Print("> ")
+
+	excludeInput, _ := reader.ReadString('\n')
+	excludeInput = strings.TrimSpace(excludeInput)
+	if excludeInput != "" {
+		conf.Exclude = parsePatterns(excludeInput)
+	}
+	fmt.Printf("-> "+i18n.T("排除项已设定")+": %s\n", formatSlice(conf.Exclude))
+
+	// --- 設定 3/5：同步副檔名 ---
+	fmt.Println(outLine)
+	fmt.Println("(3/5) " + i18n.T("同步项配置"))
+	fmt.Println(i18n.T("当前同步项") + ": " + formatSlice(conf.Sync))
+	fmt.Println(i18n.T("同步项说明"))
+	fmt.Print("> ")
+
+	syncInput, _ := reader.ReadString('\n')
+	syncInput = strings.TrimSpace(syncInput)
+	if syncInput != "" {
+		conf.Sync = parsePatterns(syncInput)
+	}
+	fmt.Printf("-> "+i18n.T("同步项已设定")+": %s\n", formatSlice(conf.Sync))
+
+	// --- 設定 4/5：確認預覽開關 ---
+	fmt.Println(outLine)
+	fmt.Println("(4/5) " + i18n.T("询问预览"))
 	fmt.Printf("%s: %v\n", i18n.T("当前设置"), conf.Confirm)
 	fmt.Print(i18n.T("询问预览说明"))
 
@@ -117,9 +145,9 @@ func runConfigMode() {
 		fmt.Println("-> " + i18n.T("预览确认开"))
 	}
 
-	// --- 設定 3/3：結束後暫停視窗開關 ---
+	// --- 設定 5/5：結束後暫停視窗開關 ---
 	fmt.Println(outLine)
-	fmt.Println("(3/3) " + i18n.T("结束等待"))
+	fmt.Println("(5/5) " + i18n.T("结束等待"))
 	fmt.Printf("%s: %v\n", i18n.T("当前设置"), conf.EndPause)
 	fmt.Print(i18n.T("结束等待说明"))
 

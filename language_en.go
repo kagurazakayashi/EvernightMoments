@@ -53,5 +53,14 @@ func Language_en() {
 		"重新输入":      "Please try again",
 		"获取器":       "Extractor",
 		"内置":        "Built-in",
+		"排除项配置":     "Configure Excluded Extensions (skip these files)",
+		"当前排除项":     "Current excluded extensions",
+		"排除项说明":     "Enter comma-separated extension patterns to exclude from renaming (e.g. *.xml, *.txt).\nPress Enter to keep current settings, or enter a pattern to update.\nLeave blank and press Enter to clear all exclude patterns.",
+		"排除项已设定":    "Excluded extensions set to",
+		"同步项配置":     "Configure Synced Extensions (rename alongside primary files)",
+		"当前同步项":     "Current synced extensions",
+		"同步项说明":     "Enter comma-separated extension patterns for companion files that should be\nrenamed to match their primary file (e.g. *.txt, *.xmp).\nWhen a.jpg is renamed, a.txt (if it exists in the same folder) will be\nrenamed using the SAME generated filename as a.jpg.\nPress Enter to keep current settings, or enter a pattern to update.\nLeave blank and press Enter to clear all sync patterns.",
+		"同步项已设定":    "Synced extensions set to",
+		"同步依据":      "Sync (following primary file)",
 	})
 }
