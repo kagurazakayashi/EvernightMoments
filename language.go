@@ -73,6 +73,14 @@ func (m *I18nManager) SetLanguage(langStr string) {
 	m.printer = message.NewPrinter(tag)
 }
 
+// MatchIndex 依據傳入的語系字串，回傳其在 support 清單中最接近的索引
+// 用於 TUI 下拉選單初始化時定位目前語系所對應的選項位置
+func (m *I18nManager) MatchIndex(langStr string) int {
+	// matcher.Match 的第二個回傳值即為命中支援清單中的索引
+	_, idx, _ := m.matcher.Match(language.Make(langStr))
+	return idx
+}
+
 // T 根據指定的 Key 執行翻譯，並支援帶入參數進行格式化（類似 Sprintf）
 func (m *I18nManager) T(key string, args ...interface{}) string {
 	// 使用內部 printer 執行翻譯與字串替換

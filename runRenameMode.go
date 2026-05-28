@@ -34,6 +34,8 @@ func runRenameMode(files []string) {
 	var plans []RenamePlan
 	counter := 1 // 檔名序號計數器，用於 <#> 標籤
 	i18n.SetLanguage(conf.Language)
+	// 依設定決定實際使用的 ExifTool 路徑（未設定時自動偵測）
+	ApplyExiftoolConfig(conf)
 
 	// 1. 處理參數：從傳入的檔案清單中提取並檢查是否包含遞迴標記 (-r)
 	recursive := false

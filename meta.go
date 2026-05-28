@@ -20,7 +20,7 @@ func GetExiftoolPath() string {
 	if ExiftoolPath != "" {
 		return ExiftoolPath
 	}
-	
+
 	// 定義可能的執行檔名稱
 	commands := []string{"exiftool", "exiftool(-k)"}
 	for _, cmd := range commands {
@@ -31,10 +31,32 @@ func GetExiftoolPath() string {
 			return path
 		}
 	}
-	
+
 	// 若皆未找到則確保變數為空
 	ExiftoolPath = ""
 	return ""
+}
+
+// DetectExiftoolPath 忽略快取，強制重新從系統 PATH 偵測 ExifTool 路徑並回傳結果。
+// 供設定介面的「自動偵測」按鈕使用。
+func DetectExiftoolPath() string {
+	// 先清空快取，迫使 GetExiftoolPath 重新搜尋
+	ExiftoolPath = ""
+	return GetExiftoolPath()
+}
+
+// ApplyExiftoolConfig 依據設定內容決定實際使用的 ExifTool 路徑。
+//   - 設定項為 nil（舊設定檔未記錄）：自動偵測
+//   - 設定項指向空字串：停用 ExifTool，僅使用內建解析
+//   - 設定項指向路徑：使用指定路徑
+func ApplyExiftoolConfig(conf Config) {
+	if conf.ExiftoolPath != nil {
+		ExiftoolPath = strings.TrimSpace(*conf.ExiftoolPath)
+		return
+	}
+	// 未記錄時維持自動偵測行為
+	ExiftoolPath = ""
+	GetExiftoolPath()
 }
 
 // GetExiftoolPathI18n 回傳目前使用的 EXIF 擷取器描述字串。
@@ -98,7 +120,7 @@ func GetPhotoTime(filePath string) (time.Time, string, error) {
 	if err != nil {
 		return time.Time{}, "", err
 	}
-	
+
 	// 回傳檔案最後修改時間，並標註來源文字
 	return info.ModTime(), i18n.T("修改日期"), nil
 }

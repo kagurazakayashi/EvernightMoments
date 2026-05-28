@@ -16,6 +16,12 @@ type Config struct {
 	Sync     []string `json:"sync,omitempty"`    // 同步更名的副檔名樣式，例如 ["*.txt", "*.xmp"]
 	Confirm  bool     `json:"confirm"`           // 是否在執行前顯示確認預覽
 	EndPause bool     `json:"endpause"`          // 程式結束後是否暫停（避免視窗直接關閉）
+	// ExiftoolPath 指定 ExifTool 可執行檔的路徑，用以讀取更精確的拍攝時間。
+	// 使用指標以區分三種狀態：
+	//   nil      ：設定檔尚未記錄此項，執行時自動偵測（向後相容舊設定檔）
+	//   指向 ""  ：使用者明確留空，代表僅使用內建解析、不使用 ExifTool
+	//   指向路徑 ：使用指定路徑的 ExifTool
+	ExiftoolPath *string `json:"exiftoolpath,omitempty"`
 }
 
 // getConfigDir 根據作業系統回傳標準的設定檔目錄路徑

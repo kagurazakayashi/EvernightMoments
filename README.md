@@ -203,20 +203,26 @@ First, go to the [ExifTool Homepage](https://github.com/exiftool/exiftool) to do
 
 ## Software Configuration
 
-To change the language, filename format, or interactive prompts, enter the configuration mode:
+To change the language, filename format, exclude/sync patterns, the ExifTool path, or interactive prompts, enter the configuration mode:
 
-Run `./EvernightMoments` (or double-click the `.exe` in Windows) **without any parameters**.
+Run `./EvernightMoments` (or double-click the `.exe` in Windows) **without any parameters** to open the full-screen TUI settings interface.
 
-Follow the prompts and press Enter after each answer. You can configure the following:
+How to navigate the interface:
+
+- Use `Tab` or the `Arrow keys` to move focus between fields.
+- Type directly into input fields; toggle switches with `Enter` or `Space`.
+- Choose **"Save & Exit"** to write the configuration, or press `Esc` / choose **"Quit"** to discard all changes.
+
+You can configure the following:
 
 ### 1. Language Settings
 
-- Select your preferred display language by entering its corresponding number.
-- Once saved, you can press Enter to skip this step in the future.
+- Pick a display language from the "Language" dropdown; the interface text switches to the selected language **instantly**.
+- Your choice is saved along with the other settings and pre-selected next time.
 
 ### 2. Filename Format
 
-- You will see the current renaming format. Press Enter to keep it, or type a new format.
+- Edit the renaming format in the "Naming Format" input field; the footer shows a **live preview** of the generated name, and illegal characters are blocked as you type.
 - Use the following **placeholders** (Case-sensitive):
 
 | Placeholder | Example Output | Meaning             |
@@ -256,15 +262,31 @@ Additional examples:
 - `<MM>-<DD>-<YYYY>_<HH>-<mm>-<ss>_<*>` -> `05-02-2025_09-07-03_Photo.jpg`
 - `<DD>.<MM>.<YYYY>_<HH>.<mm>.<ss>_<*>` -> `02.05.2025_09.07.03_Photo.jpg`
 
-### 3. Enable Preview Confirmation?
+### 3. Exclude Patterns (skip these files)
 
-- If enabled, the tool will show a preview of the changes and ask for confirmation before proceeding.
-- Enter `y` (default) to ask every time, or `n` to rename immediately.
+- Enter extension patterns to exclude in the "Exclude" input field, separated by commas (e.g. `*.xml, *.txt`).
+- Matching files will not be renamed. Leave it empty to exclude nothing.
 
-### 4. "Press Enter to Exit" Prompt?
+### 4. Sync Patterns (renamed alongside the primary file)
 
-- Decide if the program should wait for a keypress after finishing so you can review the results.
-- Enter `y` (default) to wait, or `n` to exit immediately.
+- Enter companion extension patterns in the "Sync" input field, separated by commas (e.g. `*.txt, *.xmp`).
+- When `a.jpg` is renamed, an `a.txt` in the same folder is renamed using the **same** new filename as `a.jpg`.
+
+### 5. ExifTool Path
+
+- Specify the path to the `exiftool` executable in the "ExifTool path" field to read more accurate capture times.
+- The default value is the path auto-detected by the program; it is empty if nothing was found.
+- **Leave it empty** to skip ExifTool and use only the built-in parser.
+- Click the **"Auto-detect"** button below to detect the path from the system `PATH` again.
+
+### 6. Enable Preview Confirmation?
+
+- The "Ask preview" toggle: when checked, the tool shows a preview of the changes and asks for confirmation before proceeding.
+- Uncheck it to start renaming immediately (proceed with caution).
+
+### 7. Wait for "Press Enter to Exit" on finish?
+
+- The "Wait on exit" toggle: when checked, the program pauses after finishing so you can review the results; uncheck it to exit immediately.
 
 ## Build
 
