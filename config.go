@@ -12,8 +12,8 @@ import (
 type Config struct {
 	Language string   `json:"language"`          // 介面語言設定
 	Format   string   `json:"format"`            // 輸出格式
-	Exclude  []string `json:"exclude,omitempty"` // 排除的副檔名樣式，例如 ["*.xml", "*.txt"]
-	Sync     []string `json:"sync,omitempty"`    // 同步更名的副檔名樣式，例如 ["*.txt", "*.xmp"]
+	Exclude  []string `json:"exclude,omitempty"` // 排除的路徑樣式，支援絕對/相對路徑與 glob，例如 ["*.dop", "CaptureOne\\Settings153\\*.cos"]
+	Sync     []string `json:"sync,omitempty"`    // 同步更名的路徑樣式，支援絕對/相對路徑與 glob，例如 ["*.dop"]
 	Confirm  bool     `json:"confirm"`           // 是否在執行前顯示確認預覽
 	EndPause bool     `json:"endpause"`          // 程式結束後是否暫停（避免視窗直接關閉）
 	// ExiftoolPath 指定 ExifTool 可執行檔的路徑，用以讀取更精確的拍攝時間。
@@ -151,12 +151,46 @@ func parsePatterns(input string) []string {
 	return result
 }
 
-// matchesAnyPattern 檢查 filename 是否符合 patterns 中的任一 glob 樣式
-func matchesAnyPattern(filename string, patterns []string) bool {
+// matchesAnyPattern 檢查 fullPath 是否符合 patterns 中的任一 glob 樣式。
+// 支援：
+//   - 純檔名樣式（不含路徑分隔符）：僅比對檔名部分
+//   - 路徑樣式（含路徑分隔符）：從路徑末端逐級反向比對，相容絕對路徑與相對路徑
+func matchesAnyPattern(fullPath string, patterns []string) bool {
 	for _, pattern := range patterns {
-		if matched, _ := filepath.Match(pattern, filename); matched {
+		if matchPattern(pattern, fullPath) {
 			return true
 		}
 	}
 	return false
+}
+
+// matchPattern 對單一 pattern 進行比對
+func matchPattern(pattern, fullPath string) bool {
+	// 標準化分隔符，統一使用正斜線以便跨平台比對
+	normalizedPattern := filepath.ToSlash(pattern)
+	normalizedPath := filepath.ToSlash(fullPath)
+
+	if !strings.Contains(normalizedPattern, "/") {
+		// 不含路徑分隔符：僅比對檔名
+		filename := filepath.Base(fullPath)
+		matched, _ := filepath.Match(pattern, filename)
+		return matched
+	}
+
+	// 含路徑分隔符：將 pattern 與路徑拆分為元件，從末端逐級反向比對
+	patternParts := strings.Split(normalizedPattern, "/")
+	pathParts := strings.Split(normalizedPath, "/")
+
+	if len(patternParts) > len(pathParts) {
+		return false
+	}
+
+	for i := 0; i < len(patternParts); i++ {
+		patternPart := patternParts[len(patternParts)-1-i]
+		pathPart := pathParts[len(pathParts)-1-i]
+		if matched, _ := filepath.Match(patternPart, pathPart); !matched {
+			return false
+		}
+	}
+	return true
 }

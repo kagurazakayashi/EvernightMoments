@@ -90,11 +90,10 @@ func runRenameMode(files []string) {
 	var primaryPaths []string
 	var syncPaths []string
 	for _, path := range allPaths {
-		filename := filepath.Base(path)
-		if matchesAnyPattern(filename, conf.Exclude) {
+		if matchesAnyPattern(path, conf.Exclude) {
 			continue
 		}
-		if matchesAnyPattern(filename, conf.Sync) {
+		if matchesAnyPattern(path, conf.Sync) {
 			syncPaths = append(syncPaths, path)
 		} else {
 			primaryPaths = append(primaryPaths, path)

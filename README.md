@@ -264,13 +264,19 @@ Additional examples:
 
 ### 3. Exclude Patterns (skip these files)
 
-- Enter extension patterns to exclude in the "Exclude" input field, separated by commas (e.g. `*.xml, *.txt`).
+- Enter path patterns to exclude in the "Exclude" input field, separated by commas.
+- Supports both absolute and relative paths, not just extensions. Examples:
+  - `CaptureOne\Settings153\*.cos`
+  - `*.dop`
 - Matching files will not be renamed. Leave it empty to exclude nothing.
 
 ### 4. Sync Patterns (renamed alongside the primary file)
 
-- Enter companion extension patterns in the "Sync" input field, separated by commas (e.g. `*.txt, *.xmp`).
-- When `a.jpg` is renamed, an `a.txt` in the same folder is renamed using the **same** new filename as `a.jpg`.
+- Enter path patterns in the "Sync" input field, separated by commas. Supports both absolute and relative paths, not just extensions. Examples:
+  - `CaptureOne\Settings153\*.cos`
+  - `*.dop`
+- When a primary photo file is renamed, any matching companion file in the same folder is renamed using the **same** new filename.
+- **Note:** Files matched by sync patterns are also treated as excluded by default (they will not be renamed based on their own content).
 
 ### 5. ExifTool Path
 
