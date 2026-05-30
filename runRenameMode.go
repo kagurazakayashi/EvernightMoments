@@ -25,28 +25,31 @@ type renameEntry struct {
 
 // runRenameMode 執行更名模式的完整流程
 // 參數 files 是從命令列傳入的檔案或目錄路徑清單
-func runRenameMode(files []string) {
+// 參數 cliOpts 包含從命令列旗標解析出的設定覆蓋值，可為 nil
+func runRenameMode(files []string, cliOpts *CLIFlags) {
 	fmt.Println(outLine)
 	fmt.Println(evernightMoments + " v" + evernightMomentsVersion)
 
 	// 載入設定檔並初始化多國語言
 	conf := LoadConfig()
+
+	// 套用命令列覆蓋值（若使用者有指定）
+	if cliOpts != nil {
+		applyCLIOverrides(&conf, cliOpts)
+	}
+
 	var plans []RenamePlan
 	counter := 1 // 檔名序號計數器，用於 <#> 標籤
 	i18n.SetLanguage(conf.Language)
 	// 依設定決定實際使用的 ExifTool 路徑（未設定時自動偵測）
 	ApplyExiftoolConfig(conf)
 
-	// 1. 處理參數：從傳入的檔案清單中提取並檢查是否包含遞迴標記 (-r)
+	// 從 CLI 覆蓋選項中取得遞迴旗標（向後相容舊的 -r 手動解析）
 	recursive := false
-	var cleanFiles []string
-	for _, f := range files {
-		if f == "-r" {
-			recursive = true
-		} else {
-			cleanFiles = append(cleanFiles, f)
-		}
+	if cliOpts != nil {
+		recursive = cliOpts.Recursive
 	}
+	cleanFiles := files
 
 	fmt.Println(outLine)
 	fmt.Println(i18n.T("当前格式") + ": " + conf.Format)
@@ -161,6 +164,23 @@ func runRenameMode(files []string) {
 		syncBase := strings.TrimSuffix(filepath.Base(syncPath), syncExt)
 
 		entry, ok := renameMap[filepath.Join(dir, syncBase)]
+		if !ok {
+			// 直接匹配失敗時，嘗試逐層剝離基底名稱中的擴展名後再次查找
+			// 這用於處理雙副檔名伴隨檔案（例如 .ARW.dop 對應 .ARW 主檔案）
+			altBase := syncBase
+			for {
+				ext := filepath.Ext(altBase)
+				if ext == "" {
+					break
+				}
+				altBase = strings.TrimSuffix(altBase, ext)
+				entry, ok = renameMap[filepath.Join(dir, altBase)]
+				if ok {
+					syncBase = altBase // 匹配成功時更新基底，確保後續輸出一致
+					break
+				}
+			}
+		}
 		if !ok {
 			// 找不到對應的主檔案，跳過
 			continue

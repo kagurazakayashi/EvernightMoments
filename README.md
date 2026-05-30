@@ -199,7 +199,38 @@ First, go to the [ExifTool Homepage](https://github.com/exiftool/exiftool) to do
   - Supports **multiple files**: e.g., `EvernightMoments.exe "C:\album1\photo1.arw" "C:\album1\photo2.arw"`
   - Supports **multiple folders**: e.g., `EvernightMoments.exe "C:\album1" "C:\album2"`
     - If a folder is specified, the tool will attempt to rename **all files** within that folder.
-    - By default, subfolders are not modified. To include subfolders, add the `-r` parameter.
+     - By default, subfolders are not modified. To include subfolders, add the `-r` parameter.
+
+### Command-Line Parameters
+
+You can temporarily override any configuration item via command-line flags. Each flag has a short form (`-x`) and a long form (`--xxx`). File/folder paths do not need a flag name — place them at the end. Multiple files, folders, and wildcards are supported.
+
+| Short | Long              | Description                                          | Example                                         |
+| :---- | :---------------- | :--------------------------------------------------- | :---------------------------------------------- |
+| `-l`  | `--language`      | Set display language (`en`/`zh-Hans`/`zh-Hant`/`ja`) | `-l en`                                         |
+| `-f`  | `--format`        | Set renaming format template                         | `-f "<YYYY>-<MM>-<DD>_<*>""`                    |
+| `-e`  | `--exclude`       | Add an exclude glob pattern (repeatable)             | `-e "*.dop" -e "*.cos"`                         |
+| `-s`  | `--sync`          | Add a sync glob pattern (repeatable)                 | `-s "*.dop"`                                    |
+| `-y`  | `--confirm`       | Enable preview confirmation                          | `-y`                                            |
+| `-ny` | `--no-confirm`    | Disable preview confirmation                         | `-ny`                                           |
+| `-p`  | `--pause`         | Enable pause before exit                             | `-p`                                            |
+| `-np` | `--no-pause`      | Disable pause before exit                            | `-np`                                           |
+| `-x`  | `--exiftool`      | Set ExifTool executable path (empty to disable)      | `-x "C:\Tools\exiftool.exe"`                    |
+| `-r`  | `--recursive`     | Process subdirectories recursively                   | `-r`                                            |
+
+**Examples:**
+
+```bash
+# Override format and language, disable confirmation, with recursive
+EvernightMoments -f "<YYYY>-<MM>-<DD>_<*>" -l en -ny -r "C:\Photos"
+
+# Override ExifTool path, add exclude patterns
+EvernightMoments -x "D:\exiftool.exe" -e "*.dop" -e "*.cos" "C:\album1" "C:\album2"
+```
+
+### AI Agent Integration
+
+The project includes a [`SKILL.md`](SKILL.md) file that describes the tool's architecture, CLI interface, configuration schema, and typical workflows in a format optimized for AI agents. To let your AI assistant understand and operate EvernightMoments, load this file as a skill or provide it as context.
 
 ## Software Configuration
 
@@ -276,6 +307,7 @@ Additional examples:
   - `CaptureOne\Settings153\*.cos`
   - `*.dop`
 - When a primary photo file is renamed, any matching companion file in the same folder is renamed using the **same** new filename.
+- **Multi‑extension companions:** For files with multiple extensions (e.g. `photo.ARW.dop`), the tool automatically strips the intermediate extensions to locate the primary file (e.g. matches `photo.ARW` or `photo`).
 - **Note:** Files matched by sync patterns are also treated as excluded by default (they will not be renamed based on their own content).
 
 ### 5. ExifTool Path

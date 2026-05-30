@@ -33,8 +33,18 @@ func main() {
 		return
 	}
 
-	// 若有參數（通常是拖放檔案或命令列傳入路徑），則進入「更名模式」（Rename Mode）
-	runRenameMode(args)
+	// 解析命令列旗標與位置參數
+	cliOpts, fileArgs := parseCLIFlags(args)
+
+	// 若無位置參數（檔案/目錄路徑）且未指定任何旗標，進入設定模式
+	// 這樣可以保持向後相容：僅指定旗標但無檔案時仍進入設定模式
+	if len(fileArgs) == 0 {
+		runConfigMode()
+		return
+	}
+
+	// 傳入位置參數（檔案/目錄路徑）與 CLI 覆蓋選項，進入更名模式
+	runRenameMode(fileArgs, cliOpts)
 }
 
 // EndPause 負責在程式執行完畢前暫停介面
