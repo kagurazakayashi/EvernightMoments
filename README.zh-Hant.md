@@ -217,6 +217,7 @@ chmod +x uninstall.sh
 | `-np`  | `--no-pause`       | 停用結束後暫停等待                                     | `-np`                                           |
 | `-x`   | `--exiftool`       | 設定 ExifTool 執行檔路徑（空字串可停用）               | `-x "C:\Tools\exiftool.exe"`                    |
 | `-r`   | `--recursive`      | 遞迴處理子目錄                                       | `-r`                                            |
+| `-me`  | `--multi-ext`      | 將多層副檔名視為檔名的一部分                              | `-me`                                           |
 
 **範例：**
 
@@ -226,6 +227,9 @@ EvernightMoments -f "<YYYY>-<MM>-<DD>_<*>" -l en -ny -r "C:\Photos"
 
 # 覆寫 ExifTool 路徑，添加排除樣式
 EvernightMoments -x "D:\exiftool.exe" -e "*.dop" -e "*.cos" "C:\album1" "C:\album2"
+
+# 重命名多個資料夾中的 .ARW 檔案，並同步 .ARW.dop 伴隨檔案
+EvernightMoments -f "<YYYY><MM><DD>_<HH><mm><ss><*>" -s "*.ARW.dop" -ny "D:\DCIM\10860213" "D:\DCIM\11051228"
 ```
 
 ### AI 代理整合
@@ -326,6 +330,10 @@ EvernightMoments -x "D:\exiftool.exe" -e "*.dop" -e "*.cos" "C:\album1" "C:\albu
 ### 7. 結束後是否等待“按回車鍵退出”？
 
 - 「結束等待」開關：勾選後會在執行結束時停留，方便檢視結果；取消勾選則結束後直接退出。
+
+### 8. 將多層副檔名視為檔名？
+
+- 「多層副檔名」開關：開啟時僅剝離最後一層副檔名，中間層（如 `photo.ARW.dop` 中的 `.ARW`）保留為檔名的一部分。關閉時（預設）剝離所有副檔名，僅保留不含任何副檔名的基底名稱。
 
 ## 編譯
 

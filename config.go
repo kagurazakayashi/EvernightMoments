@@ -22,6 +22,12 @@ type Config struct {
 	//   指向 ""  ：使用者明確留空，代表僅使用內建解析、不使用 ExifTool
 	//   指向路徑 ：使用指定路徑的 ExifTool
 	ExiftoolPath *string `json:"exiftoolpath,omitempty"`
+	// MultiExt 決定是否將多層副檔名視為檔名的一部分
+	//   false（預設）：剝離所有副檔名，僅保留不含任何副檔名的基底名稱
+	//     例如 "KYS0001.ARW.dop" → <*> = "KYS0001"
+	//   true：僅剝離最後一層副檔名，中間層視為檔名的一部分
+	//     例如 "KYS0001.ARW.dop" → <*> = "KYS0001.ARW"
+	MultiExt bool `json:"multiext"`
 }
 
 // getConfigDir 根據作業系統回傳標準的設定檔目錄路徑

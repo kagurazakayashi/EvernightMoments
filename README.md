@@ -217,6 +217,7 @@ You can temporarily override any configuration item via command-line flags. Each
 | `-np` | `--no-pause`      | Disable pause before exit                            | `-np`                                           |
 | `-x`  | `--exiftool`      | Set ExifTool executable path (empty to disable)      | `-x "C:\Tools\exiftool.exe"`                    |
 | `-r`  | `--recursive`     | Process subdirectories recursively                   | `-r`                                            |
+| `-me` | `--multi-ext`     | Treat multi-level extensions as part of filename     | `-me`                                           |
 
 **Examples:**
 
@@ -226,6 +227,9 @@ EvernightMoments -f "<YYYY>-<MM>-<DD>_<*>" -l en -ny -r "C:\Photos"
 
 # Override ExifTool path, add exclude patterns
 EvernightMoments -x "D:\exiftool.exe" -e "*.dop" -e "*.cos" "C:\album1" "C:\album2"
+
+# Rename .ARW files in multiple folders, with .ARW.dop sidecars synced
+EvernightMoments -f "<YYYY><MM><DD>_<HH><mm><ss><*>" -s "*.ARW.dop" -ny "D:\DCIM\10860213" "D:\DCIM\11051228"
 ```
 
 ### AI Agent Integration
@@ -325,6 +329,10 @@ Additional examples:
 ### 7. Wait for "Press Enter to Exit" on finish?
 
 - The "Wait on exit" toggle: when checked, the program pauses after finishing so you can review the results; uncheck it to exit immediately.
+
+### 8. Treat Multi-Level Extensions as Filename?
+
+- The "Long ext file" toggle: when checked, only the last extension is stripped — intermediate extensions (e.g. `.ARW` in `photo.ARW.dop`) are treated as part of the filename and preserved. When unchecked (default), all extensions are stripped, keeping only the bare base name.
 
 ## Build
 

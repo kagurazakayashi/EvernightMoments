@@ -14,6 +14,7 @@ type CLIFlags struct {
 	Confirm      *bool    // 預覽確認覆蓋值，nil 表示未指定
 	EndPause     *bool    // 結束暫停覆蓋值，nil 表示未指定
 	ExiftoolPath *string  // ExifTool 路徑覆蓋值，nil 表示未指定
+	MultiExt     *bool    // 多層副檔名覆蓋值，nil 表示未指定
 	Recursive    bool     // 是否遞迴處理子目錄
 }
 
@@ -141,6 +142,19 @@ func parseCLIFlags(args []string) (*CLIFlags, []string) {
 	f.BoolVar(&opts.Recursive, "r", false, "Process subdirectories recursively")
 	f.BoolVar(&opts.Recursive, "recursive", false, "Process subdirectories recursively")
 
+	// -- 多層副檔名（啟用） --
+	// -me / --multi-ext：將多層副檔名視為檔名的一部分
+	f.BoolFunc("me", "Treat multi-level extensions as part of filename", func(s string) error {
+		v := true
+		opts.MultiExt = &v
+		return nil
+	})
+	f.BoolFunc("multi-ext", "Treat multi-level extensions as part of filename", func(s string) error {
+		v := true
+		opts.MultiExt = &v
+		return nil
+	})
+
 	f.Parse(args)
 	return &opts, f.Args()
 }
@@ -168,5 +182,8 @@ func applyCLIOverrides(conf *Config, opts *CLIFlags) {
 	}
 	if opts.ExiftoolPath != nil {
 		conf.ExiftoolPath = opts.ExiftoolPath
+	}
+	if opts.MultiExt != nil {
+		conf.MultiExt = *opts.MultiExt
 	}
 }

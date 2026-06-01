@@ -217,6 +217,7 @@ ExifTool のダウンロードおよびインストール手順について：
 | `-np`  | `--no-pause`       | 終了前の一時停止を無効化                                | `-np`                                           |
 | `-x`   | `--exiftool`       | ExifTool 実行ファイルのパスを設定（空で無効化）          | `-x "C:\Tools\exiftool.exe"`                    |
 | `-r`   | `--recursive`      | サブディレクトリを再帰的に処理                           | `-r`                                            |
+| `-me`  | `--multi-ext`      | 複数レベルの拡張子をファイル名の一部として扱う              | `-me`                                           |
 
 **例：**
 
@@ -226,6 +227,9 @@ EvernightMoments -f "<YYYY>-<MM>-<DD>_<*>" -l en -ny -r "C:\Photos"
 
 # ExifTool パスを上書き、除外パターンを追加
 EvernightMoments -x "D:\exiftool.exe" -e "*.dop" -e "*.cos" "C:\album1" "C:\album2"
+
+# 複数フォルダの .ARW ファイルをリネームし、.ARW.dop サイドカーを同期
+EvernightMoments -f "<YYYY><MM><DD>_<HH><mm><ss><*>" -s "*.ARW.dop" -ny "D:\DCIM\10860213" "D:\DCIM\11051228"
 ```
 
 ### AI エージェント統合
@@ -326,6 +330,10 @@ EvernightMoments -x "D:\exiftool.exe" -e "*.dop" -e "*.cos" "C:\album1" "C:\albu
 ### 7. 終了後に「エンターキーで終了」の待機を表示しますか？
 
 - 「終了待機」トグル：オンにすると、結果を確認できるよう終了時に画面を保持します。オフにすると終了後すぐに閉じます。
+
+### 8. 複数レベルの拡張子をファイル名として扱いますか？
+
+- 「複数拡張子」トグル：オンにすると最後の拡張子のみ除去し、中間層（例: `photo.ARW.dop` の `.ARW`）をファイル名の一部として保持します。オフの場合（デフォルト）はすべての拡張子を除去し、ベース名のみを保持します。
 
 ## コンパイル
 

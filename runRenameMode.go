@@ -18,17 +18,19 @@ type RenamePlan struct {
 	RawTime string // 格式化後的原始時間字串
 }
 
-// renameEntry 記錄主檔案更名後的基底名稱（不含副檔名），供同步檔案匹配使用
+// renameEntry 記錄主檔案更名前後的完整檔名與基底名稱，供同步檔案匹配使用
 type renameEntry struct {
-	newBase string // 更名後不含副檔名的基底名稱
+	oldFullName string // 更名前含副檔名的完整檔名（如 "KYS0001.ARW"）
+	newFullName string // 更名後含副檔名的完整檔名（如 "20260214_171635_KYS0001.ARW"）
+	newBase     string // 更名後不含副檔名的基底名稱（如 "20260214_171635_KYS0001"）
 }
 
 // runRenameMode 執行更名模式的完整流程
 // 參數 files 是從命令列傳入的檔案或目錄路徑清單
 // 參數 cliOpts 包含從命令列旗標解析出的設定覆蓋值，可為 nil
 func runRenameMode(files []string, cliOpts *CLIFlags) {
-	fmt.Println(outLine)
-	fmt.Println(evernightMoments + " v" + evernightMomentsVersion)
+	fmt.Println(Dim(outLine))
+	fmt.Println(Bold(evernightMoments + " v" + evernightMomentsVersion))
 
 	// 載入設定檔並初始化多國語言
 	conf := LoadConfig()
@@ -51,12 +53,12 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 	}
 	cleanFiles := files
 
-	fmt.Println(outLine)
-	fmt.Println(i18n.T("当前格式") + ": " + conf.Format)
-	fmt.Println(i18n.T("要配置格式") + " " + evernightMoments)
-	fmt.Println(GetExiftoolPathI18n())
-	fmt.Println(outLine)
-	fmt.Println(i18n.T("正在分析") + "...")
+	fmt.Println(Dim(outLine))
+	fmt.Println(Dim(i18n.T("当前格式") + ": ") + conf.Format)
+	fmt.Println(Dim(i18n.T("要配置格式") + " " + evernightMoments))
+	fmt.Println(Dim(GetExiftoolPathI18n()))
+	fmt.Println(Dim(outLine))
+	fmt.Println(Cyan(i18n.T("正在分析") + "..."))
 
 	// 2. 預掃描邏輯，先獲取所有檔案路徑
 	var allPaths []string
@@ -120,15 +122,15 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 
 		t, source, err := GetPhotoTime(path)
 		if err != nil {
-			fmt.Printf("[%d/%d] %s %s: %s\n", i+1, totalFiles, i18n.T("跳过"), i18n.T("文件错误"), path)
+			fmt.Printf("[%s/%d] %s %s: %s\n", PadNumberByReference(i+1, totalFiles), totalFiles, Yellow(i18n.T("跳过")), i18n.T("文件错误"), Red(path))
 			continue
 		}
 
 		rawTimeStr := t.Format("2006-01-02 15:04:05")
-		newName := GenerateNewName(conf.Format, t, path, counter)
+		newName := GenerateNewName(conf.Format, t, path, counter, conf.MultiExt)
 
 		if isInvalid, char := ContainsInvalidChars(newName); isInvalid {
-			fmt.Printf("[%d/%d] %s\n", i+1, totalFiles, i18n.T("非法字符格式", char))
+			fmt.Printf("[%s/%d] %s\n", PadNumberByReference(i+1, totalFiles), totalFiles, Red(i18n.T("非法字符格式", char)))
 			continue
 		}
 
@@ -145,14 +147,22 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 			RawTime: rawTimeStr,
 		})
 
-		// 記錄主檔案的舊基底名稱 → 新基底名稱對照
-		oldBase := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+		// 記錄主檔案的新舊名稱對照
+		// 同時以舊基底名稱與舊完整檔名作為鍵，處理雙副檔名伴隨檔案的精確匹配
+		oldFullName := filepath.Base(path)
+		oldBase := strings.TrimSuffix(oldFullName, filepath.Ext(oldFullName))
 		newBase := strings.TrimSuffix(newName, filepath.Ext(newName))
-		renameMap[filepath.Join(dir, oldBase)] = renameEntry{newBase: newBase}
+		entry := renameEntry{
+			oldFullName: oldFullName,
+			newFullName: newName,
+			newBase:     newBase,
+		}
+		renameMap[filepath.Join(dir, oldFullName)] = entry
+		renameMap[filepath.Join(dir, oldBase)] = entry
 
 		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalFiles), totalFiles, i18n.T("原文件"), absPath)
-		fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), source, rawTimeStr)
-		fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), newPath)
+		fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), Cyan(source), rawTimeStr)
+		fmt.Println("-> " + i18n.T("新文件名") + " : " + Green(newPath))
 		counter++
 	}
 
@@ -161,33 +171,42 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 	for _, syncPath := range syncPaths {
 		dir := filepath.Dir(syncPath)
 		syncExt := filepath.Ext(syncPath)
-		syncBase := strings.TrimSuffix(filepath.Base(syncPath), syncExt)
+		syncStem := strings.TrimSuffix(filepath.Base(syncPath), syncExt)
 
-		entry, ok := renameMap[filepath.Join(dir, syncBase)]
+		// 先嘗試以 syncStem 直接匹配，失敗則逐層剝離副檔名後再試
+		// 這用於處理雙副檔名伴隨檔案（例如 KYS0001.ARW.dop 對應主檔案 KYS0001.ARW）
+		entry, ok := renameMap[filepath.Join(dir, syncStem)]
+		matchedKey := syncStem
 		if !ok {
-			// 直接匹配失敗時，嘗試逐層剝離基底名稱中的擴展名後再次查找
-			// 這用於處理雙副檔名伴隨檔案（例如 .ARW.dop 對應 .ARW 主檔案）
-			altBase := syncBase
+			altStem := syncStem
 			for {
-				ext := filepath.Ext(altBase)
+				ext := filepath.Ext(altStem)
 				if ext == "" {
 					break
 				}
-				altBase = strings.TrimSuffix(altBase, ext)
-				entry, ok = renameMap[filepath.Join(dir, altBase)]
-				if ok {
-					syncBase = altBase // 匹配成功時更新基底，確保後續輸出一致
+				altStem = strings.TrimSuffix(altStem, ext)
+				if entry, ok = renameMap[filepath.Join(dir, altStem)]; ok {
+					matchedKey = altStem
 					break
 				}
 			}
 		}
 		if !ok {
-			// 找不到對應的主檔案，跳過
 			continue
 		}
 
 		syncIdx++
-		newName := entry.newBase + syncExt
+		// 根據匹配到的鍵決定新檔名：
+		//   - 若匹配到主檔案的完整舊檔名（含副檔名），保留主副檔名 + 伴隨副檔名
+		//     例如 KYS0001.ARW.dop → 20260214_171635_KYS0001.ARW.dop
+		//   - 若匹配到主檔案的基底名稱（不含副檔名），僅使用新基底 + 伴隨副檔名
+		//     例如 KYS0001.dop → 20260214_171635_KYS0001.dop
+		var newName string
+		if matchedKey == entry.oldFullName {
+			newName = entry.newFullName + syncExt
+		} else {
+			newName = entry.newBase + syncExt
+		}
 		newPath := filepath.Join(dir, newName)
 		absPath, _ := filepath.Abs(syncPath)
 
@@ -200,22 +219,22 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 			RawTime: "-",
 		})
 
-		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(syncIdx, totalFiles), totalFiles, i18n.T("原文件"), absPath)
-		fmt.Printf("-> %s: %s\n", i18n.T("同步依据"), syncPath)
-		fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), newPath)
+		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(syncIdx, totalFiles), totalFiles, Yellow(i18n.T("原文件")), absPath)
+		fmt.Printf("-> %s: %s\n", Dim(i18n.T("同步依据")), Dim(syncPath))
+		fmt.Println("-> " + i18n.T("新文件名") + " : " + Green(newPath))
 	}
 
 	// 若未發現符合條件的檔案，則提示並結束
 	if len(plans) == 0 {
-		fmt.Println(i18n.T("没有文件"))
+		fmt.Println(Yellow(i18n.T("没有文件")))
 		return
 	}
 
 	// 6. 使用者確認邏輯：根據設定決定是否顯示預覽確認
 	proceed := true
-	fmt.Println(outLine)
+	fmt.Println(Dim(outLine))
 	if conf.Confirm {
-		fmt.Printf("%s%s? (y/N): ", i18n.T("共计", len(plans)), i18n.T("确认"))
+		fmt.Printf("%s%s? (y/N): ", Yellow(i18n.T("共计", len(plans))), Yellow(i18n.T("确认")))
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(strings.ToLower(input))
@@ -226,35 +245,35 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 
 	// 7. 正式執行檔案更名作業
 	if proceed {
-		fmt.Println(i18n.T("开始") + "...")
+		fmt.Println(Cyan(i18n.T("开始") + "..."))
 		successCount := 0
 		for i, p := range plans {
 			var totalPlans int = len(plans)
 			fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalPlans), totalPlans, i18n.T("原文件"), p.AbsPath)
-			fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), p.Source, p.RawTime)
+			fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), Cyan(p.Source), p.RawTime)
 
 			if p.OldPath == p.NewPath {
-				fmt.Printf("-> %s : %s\n", i18n.T("跳过"), i18n.T("无变化"))
+				fmt.Println("-> " + Yellow(i18n.T("跳过")) + " : " + Yellow(i18n.T("无变化")))
 				continue
 			}
 
-			fmt.Printf("-> %s : %s\n", i18n.T("新文件名"), p.NewPath)
+			fmt.Println("-> " + i18n.T("新文件名") + " : " + Green(p.NewPath))
 			if _, err := os.Stat(p.NewPath); err == nil {
-				fmt.Println("-> " + i18n.T("重命名失败") + i18n.T("已存在"))
+				fmt.Println("-> " + Red(i18n.T("重命名失败")) + " " + Red(i18n.T("已存在")))
 				continue
 			}
 
 			err := os.Rename(p.OldPath, p.NewPath)
 			if err != nil {
-				fmt.Printf("-> %s: %v\n", i18n.T("重命名失败"), err)
+				fmt.Printf("-> %s: %v\n", Red(i18n.T("重命名失败")), err)
 			} else {
-				fmt.Println("-> " + i18n.T("重命名成功"))
+				fmt.Println("-> " + Green(i18n.T("重命名成功")))
 				successCount++
 			}
 		}
-		fmt.Println(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans)))
+		fmt.Println(Green(i18n.T("处理结果", successCount, len(plans)-successCount, len(plans))))
 	} else {
-		fmt.Println(i18n.T("取消"))
+		fmt.Println(Yellow(i18n.T("取消")))
 	}
 
 	if conf.EndPause {

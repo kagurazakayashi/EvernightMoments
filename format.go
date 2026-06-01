@@ -18,17 +18,26 @@ var reservedNames = make(map[string]bool)
 //	t: 用於命名的時間基準（通常為照片拍攝時間）
 //	originalPath: 原始檔案的完整路徑
 //	index: 當前處理的檔案序號，用於 <#> 標籤
+//	multiExt: 是否將多層副檔名視為檔名的一部分（true = 僅剝離最後一層，false = 剝離全部）
 //
 // 回傳值：
 //
 //	結合格式化後的名稱與原始副檔名的新檔名
-func GenerateNewName(format string, t time.Time, originalPath string, index int) string {
+func GenerateNewName(format string, t time.Time, originalPath string, index int, multiExt bool) string {
 	// 取得原始檔名（含副檔名）
 	originalName := filepath.Base(originalPath)
-	// 取得副檔名（例如 .jpg）
+	// 取得最後一層副檔名（例如 .dop）
 	ext := filepath.Ext(originalName)
-	// 取得不含副檔名的原始名稱
-	nameWithoutExt := strings.TrimSuffix(originalName, ext)
+	// 依 multiExt 設定決定 nameWithoutExt 的計算方式
+	var nameWithoutExt string
+	if multiExt {
+		// 僅剝離最後一層副檔名，中間層保留為檔名的一部分
+		nameWithoutExt = strings.TrimSuffix(originalName, ext)
+	} else {
+		// 剝離所有副檔名，不將多層副檔名視為檔名
+		// 例如 "KYS0001.ARW.dop" → "KYS0001"
+		nameWithoutExt = stripAllExtensions(originalName)
+	}
 
 	// 定義替換對映清單，將格式標籤映射至實際數值
 	// 注意：長標籤（如 <YYYY>）必須排在短標籤（如 <YY>）前面，以避免部分匹配導致錯誤
@@ -62,6 +71,18 @@ func GenerateNewName(format string, t time.Time, originalPath string, index int)
 
 	// 重新拼接副檔名並回傳
 	return result + ext
+}
+
+// stripAllExtensions 從檔名中逐層剝離所有副檔名，僅回傳不含任何副檔名的基底名稱
+// 例如 "KYS0001.ARW.dop" → "KYS0001"；"photo.jpg" → "photo"；"README" → "README"
+func stripAllExtensions(filename string) string {
+	for {
+		ext := filepath.Ext(filename)
+		if ext == "" {
+			return filename
+		}
+		filename = strings.TrimSuffix(filename, ext)
+	}
 }
 
 // InitInvalidChars 初始化保留名稱清單

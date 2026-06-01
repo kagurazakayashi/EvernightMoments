@@ -116,10 +116,11 @@ func buildConfigUI(
 	lblExif := i18n.T("Exif路径")
 	lblConfirm := i18n.T("预览确认")
 	lblEndPause := i18n.T("等待退出")
+	lblMultiExt := i18n.T("多层副档名")
 
 	// 計算所有標籤的最大顯示寬度，供對齊填充使用（考量中日文字佔兩格寬）
 	maxLabelWidth := 0
-	for _, l := range []string{lblLang, lblFormat, lblExclude, lblSync, lblExif, lblConfirm, lblEndPause} {
+	for _, l := range []string{lblLang, lblFormat, lblExclude, lblSync, lblExif, lblConfirm, lblEndPause, lblMultiExt} {
 		if w := tview.TaggedStringWidth(l); w > maxLabelWidth {
 			maxLabelWidth = w
 		}
@@ -135,7 +136,7 @@ func buildConfigUI(
 
 	// 預先宣告各表單欄位變數，供下方各閉包延遲取值
 	var formatField, excludeField, syncField, exiftoolField *tview.InputField
-	var confirmCheck, endPauseCheck *tview.Checkbox
+	var confirmCheck, endPauseCheck, multiExtCheck *tview.Checkbox
 
 	// 底部資訊區，顯示欄位說明、即時預覽與操作提示
 	footer := tview.NewTextView().SetDynamicColors(true).SetWordWrap(true)
@@ -170,7 +171,7 @@ func buildConfigUI(
 			return "[red]" + i18n.T("非法字符格式", ch) + "[-]"
 		}
 		if txt != "" {
-			example := GenerateNewName(txt, time.Now(), "Photo.jpg", 1)
+			example := GenerateNewName(txt, time.Now(), "Photo.jpg", 1, conf.MultiExt)
 			return i18n.T("示例输出") + ": [green]" + example + "[-]"
 		}
 		return ""
@@ -186,6 +187,7 @@ func buildConfigUI(
 		conf.ExiftoolPath = &ep
 		conf.Confirm = confirmCheck.IsChecked()
 		conf.EndPause = endPauseCheck.IsChecked()
+		conf.MultiExt = multiExtCheck.IsChecked()
 	}
 
 	// --- 語言下拉選單 ---
@@ -263,6 +265,12 @@ func buildConfigUI(
 		SetChecked(conf.EndPause)
 	endPauseCheck.SetFocusFunc(func() { refreshFooter(i18n.T("结束等待"), "") })
 
+	// --- 多層副檔名開關 ---
+	multiExtCheck = tview.NewCheckbox().
+		SetLabel(pad(lblMultiExt)).
+		SetChecked(conf.MultiExt)
+	multiExtCheck.SetFocusFunc(func() { refreshFooter(i18n.T("多层副档名说明"), "") })
+
 	// 將所有欄位依序加入表單
 	form := tview.NewForm()
 	form.AddFormItem(langDD)
@@ -285,6 +293,7 @@ func buildConfigUI(
 	form.AddFormItem(detectBtn)
 	form.AddFormItem(confirmCheck)
 	form.AddFormItem(endPauseCheck)
+	form.AddFormItem(multiExtCheck)
 
 	// 「儲存並退出」按鈕：同步輸入、檢查格式合法性後寫入設定檔
 	form.AddButton(i18n.T("保存"), func() {

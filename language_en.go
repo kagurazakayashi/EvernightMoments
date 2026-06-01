@@ -76,5 +76,7 @@ func Language_en() {
 		"Exif说明":    "Specify the ExifTool executable path to read more accurate capture times. Leave empty to use only the built-in parser. Click the \"Auto-detect\" button below to detect again.",
 		"Exif未找到":   "ExifTool not found; the built-in parser will be used.",
 		"Exif已找到":   "ExifTool detected",
+		"多层副档名":    "Long ext file",
+		"多层副档名说明": "Treat multi-level extensions (e.g. .ARW.dop) as part of the filename? If enabled, only the last extension is stripped; the original filename includes intermediate extensions. If disabled (default), all extensions are stripped.",
 	})
 }
