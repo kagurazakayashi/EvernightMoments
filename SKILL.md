@@ -50,6 +50,7 @@ File/folder paths are positional arguments placed at the end. Multiple paths and
 | `-x`  | `--exiftool`     | `string`   | `exiftoolpath`  | Path to ExifTool executable (empty = disable)   |
 | `-r`  | `--recursive`    | `bool`     | —               | Recurse into subdirectories                     |
 | `-me` | `--multi-ext`    | `bool`     | `multiext`      | Treat multi-level extensions as part of filename |
+| `-nc` | `--no-color`     | `bool`     | `nocolor`       | Disable colored terminal output                  |
 
 `-h` / `--help` prints the full flag list.
 
@@ -82,7 +83,8 @@ Legacy config (same directory as executable, named `<exe>.json`) is auto‑migra
   "confirm": true,
   "endpause": true,
   "exiftoolpath": "C:\\Tools\\exiftool.exe",
-  "multiext": false
+  "multiext": false,
+  "nocolor": false
 }
 ```
 
@@ -96,6 +98,9 @@ Legacy config (same directory as executable, named `<exe>.json`) is auto‑migra
 | `endpause`     | `bool`     | `true`                                          | Wait for Enter before exit (prevents Windows console auto‑close) |
 | `exiftoolpath` | `*string`  | `null` (auto‑detect on next run if unset)       | `null` = auto‑detect, `""` = disable ExifTool, `"path"` = use    |
 | `multiext`     | `bool`     | `false`                                         | `true` = preserve intermediate extensions as filename; `false` = strip all extensions |
+| `nocolor`      | `bool`     | `false`                                         | `true` = disable ANSI color codes in output |
+
+ANSI color codes are supported on both Windows CMD (10+) and Linux/macOS terminals. On Windows, virtual terminal processing is enabled automatically at startup via `SetConsoleMode(ENABLE_VIRTUAL_TERMINAL_PROCESSING)`.
 
 ## Format Placeholders
 
@@ -166,6 +171,8 @@ In both cases the last extension (`.dop`) is re‑appended after `<*>` substitut
 | `golang.org/x/text`           | I18N matching & printing |
 
 ## Typical Usage Patterns
+
+**IMPORTANT — AI Agent Rule:** When invoking EvernightMoments as an AI agent, you MUST always append `-nc` (or `--no-color`) to disable ANSI color codes. Colored output contains escape sequences that interfere with output parsing and may cause the command to be misinterpreted.
 
 ```bash
 # Batch rename with custom format, no confirmation, recursive

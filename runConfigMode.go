@@ -117,10 +117,11 @@ func buildConfigUI(
 	lblConfirm := i18n.T("预览确认")
 	lblEndPause := i18n.T("等待退出")
 	lblMultiExt := i18n.T("多层副档名")
+	lblNoColor := i18n.T("彩色输出")
 
 	// 計算所有標籤的最大顯示寬度，供對齊填充使用（考量中日文字佔兩格寬）
 	maxLabelWidth := 0
-	for _, l := range []string{lblLang, lblFormat, lblExclude, lblSync, lblExif, lblConfirm, lblEndPause, lblMultiExt} {
+	for _, l := range []string{lblLang, lblFormat, lblExclude, lblSync, lblExif, lblConfirm, lblEndPause, lblMultiExt, lblNoColor} {
 		if w := tview.TaggedStringWidth(l); w > maxLabelWidth {
 			maxLabelWidth = w
 		}
@@ -136,7 +137,7 @@ func buildConfigUI(
 
 	// 預先宣告各表單欄位變數，供下方各閉包延遲取值
 	var formatField, excludeField, syncField, exiftoolField *tview.InputField
-	var confirmCheck, endPauseCheck, multiExtCheck *tview.Checkbox
+	var confirmCheck, endPauseCheck, multiExtCheck, noColorCheck *tview.Checkbox
 
 	// 底部資訊區，顯示欄位說明、即時預覽與操作提示
 	footer := tview.NewTextView().SetDynamicColors(true).SetWordWrap(true)
@@ -188,6 +189,7 @@ func buildConfigUI(
 		conf.Confirm = confirmCheck.IsChecked()
 		conf.EndPause = endPauseCheck.IsChecked()
 		conf.MultiExt = multiExtCheck.IsChecked()
+		conf.NoColor = noColorCheck.IsChecked()
 	}
 
 	// --- 語言下拉選單 ---
@@ -271,6 +273,12 @@ func buildConfigUI(
 		SetChecked(conf.MultiExt)
 	multiExtCheck.SetFocusFunc(func() { refreshFooter(i18n.T("多层副档名说明"), "") })
 
+	// --- 停用彩色輸出開關 ---
+	noColorCheck = tview.NewCheckbox().
+		SetLabel(pad(lblNoColor)).
+		SetChecked(conf.NoColor)
+	noColorCheck.SetFocusFunc(func() { refreshFooter(i18n.T("彩色输出说明"), "") })
+
 	// 將所有欄位依序加入表單
 	form := tview.NewForm()
 	form.AddFormItem(langDD)
@@ -294,6 +302,7 @@ func buildConfigUI(
 	form.AddFormItem(confirmCheck)
 	form.AddFormItem(endPauseCheck)
 	form.AddFormItem(multiExtCheck)
+	form.AddFormItem(noColorCheck)
 
 	// 「儲存並退出」按鈕：同步輸入、檢查格式合法性後寫入設定檔
 	form.AddButton(i18n.T("保存"), func() {

@@ -218,6 +218,7 @@ You can temporarily override any configuration item via command-line flags. Each
 | `-x`  | `--exiftool`      | Set ExifTool executable path (empty to disable)      | `-x "C:\Tools\exiftool.exe"`                    |
 | `-r`  | `--recursive`     | Process subdirectories recursively                   | `-r`                                            |
 | `-me` | `--multi-ext`     | Treat multi-level extensions as part of filename     | `-me`                                           |
+| `-nc` | `--no-color`      | Disable colored terminal output                      | `-nc`                                           |
 
 **Examples:**
 
@@ -333,6 +334,10 @@ Additional examples:
 ### 8. Treat Multi-Level Extensions as Filename?
 
 - The "Long ext file" toggle: when checked, only the last extension is stripped — intermediate extensions (e.g. `.ARW` in `photo.ARW.dop`) are treated as part of the filename and preserved. When unchecked (default), all extensions are stripped, keeping only the bare base name.
+
+### 9. Enable Colored Output?
+
+- The "Color output" toggle: when checked, ANSI color codes are enabled in terminal output. Uncheck it to disable colors — recommended when redirecting output or using the tool via an AI agent.
 
 ## Build
 

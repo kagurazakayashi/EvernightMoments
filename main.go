@@ -24,6 +24,9 @@ const (
 
 // main 是程式的進入點
 func main() {
+	// 初始化終端機色彩支援（Windows 上啟用 ANSI 虛擬終端機處理）
+	initConsoleColors()
+
 	// 取得命令列參數（排除執行檔路徑本身）
 	args := os.Args[1:]
 

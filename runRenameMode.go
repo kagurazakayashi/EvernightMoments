@@ -29,6 +29,12 @@ type renameEntry struct {
 // 參數 files 是從命令列傳入的檔案或目錄路徑清單
 // 參數 cliOpts 包含從命令列旗標解析出的設定覆蓋值，可為 nil
 func runRenameMode(files []string, cliOpts *CLIFlags) {
+	// 先在載入設定前依 CLI 旗標預設色彩輸出狀態
+	// 避免第一行輸出（標題分隔線）在 -nc 時仍產生色彩碼
+	if cliOpts != nil && cliOpts.NoColor != nil {
+		noColorOutput = *cliOpts.NoColor
+	}
+
 	fmt.Println(Dim(outLine))
 	fmt.Println(Bold(evernightMoments + " v" + evernightMomentsVersion))
 
@@ -39,6 +45,9 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 	if cliOpts != nil {
 		applyCLIOverrides(&conf, cliOpts)
 	}
+
+	// 依設定最終決定是否停用彩色輸出
+	noColorOutput = conf.NoColor
 
 	var plans []RenamePlan
 	counter := 1 // 檔名序號計數器，用於 <#> 標籤
@@ -107,7 +116,7 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 
 	totalFiles := len(primaryPaths) + len(syncPaths)
 	if totalFiles == 0 {
-		fmt.Println(i18n.T("没有文件"))
+		fmt.Println(Yellow(i18n.T("没有文件")))
 		return
 	}
 
@@ -160,8 +169,8 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 		renameMap[filepath.Join(dir, oldFullName)] = entry
 		renameMap[filepath.Join(dir, oldBase)] = entry
 
-		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalFiles), totalFiles, i18n.T("原文件"), absPath)
-		fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), Cyan(source), rawTimeStr)
+		fmt.Printf("[%s/%d] %s : %s\n", Cyan(PadNumberByReference(i+1, totalFiles)), totalFiles, i18n.T("原文件"), Cyan(absPath))
+		fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), Cyan(source), Yellow(rawTimeStr))
 		fmt.Println("-> " + i18n.T("新文件名") + " : " + Green(newPath))
 		counter++
 	}
@@ -219,8 +228,8 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 			RawTime: "-",
 		})
 
-		fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(syncIdx, totalFiles), totalFiles, Yellow(i18n.T("原文件")), absPath)
-		fmt.Printf("-> %s: %s\n", Dim(i18n.T("同步依据")), Dim(syncPath))
+		fmt.Printf("[%s/%d] %s : %s\n", Cyan(PadNumberByReference(syncIdx, totalFiles)), totalFiles, Yellow(i18n.T("原文件")), Cyan(absPath))
+		fmt.Printf("-> %s: %s\n", i18n.T("同步依据"), Cyan(syncPath))
 		fmt.Println("-> " + i18n.T("新文件名") + " : " + Green(newPath))
 	}
 
@@ -249,8 +258,8 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 		successCount := 0
 		for i, p := range plans {
 			var totalPlans int = len(plans)
-			fmt.Printf("[%s/%d] %s : %s\n", PadNumberByReference(i+1, totalPlans), totalPlans, i18n.T("原文件"), p.AbsPath)
-			fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), Cyan(p.Source), p.RawTime)
+			fmt.Printf("[%s/%d] %s : %s\n", Cyan(PadNumberByReference(i+1, totalPlans)), totalPlans, i18n.T("原文件"), Cyan(p.AbsPath))
+			fmt.Printf("-> %s : %s : %s\n", i18n.T("依据"), Cyan(p.Source), Yellow(p.RawTime))
 
 			if p.OldPath == p.NewPath {
 				fmt.Println("-> " + Yellow(i18n.T("跳过")) + " : " + Yellow(i18n.T("无变化")))
@@ -259,7 +268,7 @@ func runRenameMode(files []string, cliOpts *CLIFlags) {
 
 			fmt.Println("-> " + i18n.T("新文件名") + " : " + Green(p.NewPath))
 			if _, err := os.Stat(p.NewPath); err == nil {
-				fmt.Println("-> " + Red(i18n.T("重命名失败")) + " " + Red(i18n.T("已存在")))
+				fmt.Println("-> " + Red(i18n.T("重命名失败")) + " : " + Red(i18n.T("已存在")))
 				continue
 			}
 

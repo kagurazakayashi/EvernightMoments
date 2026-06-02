@@ -218,6 +218,7 @@ chmod +x uninstall.sh
 | `-x`   | `--exiftool`       | 设定 ExifTool 执行档路径（空字串可停用）                | `-x "C:\Tools\exiftool.exe"`                    |
 | `-r`   | `--recursive`      | 递回处理子目录                                       | `-r`                                            |
 | `-me`  | `--multi-ext`      | 将多层副档名视为档名的一部分                              | `-me`                                           |
+| `-nc`  | `--no-color`       | 停用彩色终端输出                                       | `-nc`                                           |
 
 **示例：**
 
@@ -334,6 +335,10 @@ EvernightMoments -f "<YYYY><MM><DD>_<HH><mm><ss><*>" -s "*.ARW.dop" -ny "D:\DCIM
 ### 8. 将多层副檔名视为檔名？
 
 - 「多层副檔名」开关：开启时仅剥离最后一层副檔名，中间层（如 `photo.ARW.dop` 中的 `.ARW`）保留为檔名的一部分。关闭时（预设）剥离所有副檔名，仅保留不含任何副檔名的基底名称。
+
+### 9. 是否启用彩色输出？
+
+- 「彩色输出」开关：勾选后终端输出会包含 ANSI 色彩码。若重定向输出或透过 AI 代理使用此工具，建议取消勾选。
 
 ## 编译
 

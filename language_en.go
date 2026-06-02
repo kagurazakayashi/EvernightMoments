@@ -78,5 +78,7 @@ func Language_en() {
 		"Exif已找到":   "ExifTool detected",
 		"多层副档名":    "Long ext file",
 		"多层副档名说明": "Treat multi-level extensions (e.g. .ARW.dop) as part of the filename? If enabled, only the last extension is stripped; the original filename includes intermediate extensions. If disabled (default), all extensions are stripped.",
+		"彩色输出":    "Color output",
+		"彩色输出说明": "Enable colored terminal output? Disable this if you are redirecting output or using the tool via an AI agent.",
 	})
 }

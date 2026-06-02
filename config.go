@@ -28,6 +28,10 @@ type Config struct {
 	//   true：僅剝離最後一層副檔名，中間層視為檔名的一部分
 	//     例如 "KYS0001.ARW.dop" → <*> = "KYS0001.ARW"
 	MultiExt bool `json:"multiext"`
+	// NoColor 決定是否停用彩色輸出
+	//   false（預設）：啟用彩色輸出
+	//   true：停用所有 ANSI 色彩碼，輸出純文字
+	NoColor bool `json:"nocolor"`
 }
 
 // getConfigDir 根據作業系統回傳標準的設定檔目錄路徑

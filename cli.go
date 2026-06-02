@@ -15,6 +15,7 @@ type CLIFlags struct {
 	EndPause     *bool    // 結束暫停覆蓋值，nil 表示未指定
 	ExiftoolPath *string  // ExifTool 路徑覆蓋值，nil 表示未指定
 	MultiExt     *bool    // 多層副檔名覆蓋值，nil 表示未指定
+	NoColor      *bool    // 停用彩色輸出覆蓋值，nil 表示未指定
 	Recursive    bool     // 是否遞迴處理子目錄
 }
 
@@ -155,6 +156,19 @@ func parseCLIFlags(args []string) (*CLIFlags, []string) {
 		return nil
 	})
 
+	// -- 停用彩色輸出 --
+	// -nc / --no-color：停用 ANSI 彩色輸出
+	f.BoolFunc("nc", "Disable colored output", func(s string) error {
+		v := true
+		opts.NoColor = &v
+		return nil
+	})
+	f.BoolFunc("no-color", "Disable colored output", func(s string) error {
+		v := true
+		opts.NoColor = &v
+		return nil
+	})
+
 	f.Parse(args)
 	return &opts, f.Args()
 }
@@ -185,5 +199,8 @@ func applyCLIOverrides(conf *Config, opts *CLIFlags) {
 	}
 	if opts.MultiExt != nil {
 		conf.MultiExt = *opts.MultiExt
+	}
+	if opts.NoColor != nil {
+		conf.NoColor = *opts.NoColor
 	}
 }
