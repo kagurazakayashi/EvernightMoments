@@ -215,9 +215,10 @@ You can temporarily override any configuration item via command-line flags. Each
 | `-ny` | `--no-confirm`    | Disable preview confirmation                         | `-ny`                                           |
 | `-p`  | `--pause`         | Enable pause before exit                             | `-p`                                            |
 | `-np` | `--no-pause`      | Disable pause before exit                            | `-np`                                           |
-| `-x`  | `--exiftool`      | Set ExifTool executable path (empty to disable)      | `-x "C:\Tools\exiftool.exe"`                    |
+| `-x`  | `--exiftool-path` | Set ExifTool executable path (empty to disable)      | `-x "C:\Tools\exiftool.exe"`                    |
 | `-r`  | `--recursive`     | Process subdirectories recursively                   | `-r`                                            |
-| `-me` | `--multi-ext`     | Treat multi-level extensions as part of filename     | `-me`                                           |
+| `-m`  | `--multi-ext`     | Enable multi-level extension support (default)       | `-m`                                            |
+| `-nm` | `--no-multi-ext`  | Disable multi-level extension support                | `-nm`                                           |
 | `-nc` | `--no-color`      | Disable colored terminal output                      | `-nc`                                           |
 
 **Examples:**
@@ -331,9 +332,9 @@ Additional examples:
 
 - The "Wait on exit" toggle: when checked, the program pauses after finishing so you can review the results; uncheck it to exit immediately.
 
-### 8. Treat Multi-Level Extensions as Filename?
+### 8. Support Multi-Level Extensions?
 
-- The "Long ext file" toggle: when checked, only the last extension is stripped — intermediate extensions (e.g. `.ARW` in `photo.ARW.dop`) are treated as part of the filename and preserved. When unchecked (default), all extensions are stripped, keeping only the bare base name.
+- The "Multi ext" toggle: when checked (default), all extensions are stripped — intermediate extensions (e.g. `.ARW` in `photo.ARW.dop`) are treated as extensions. When unchecked, only the last extension is stripped; intermediate extensions are preserved as part of the filename.
 
 ### 9. Enable Colored Output?
 

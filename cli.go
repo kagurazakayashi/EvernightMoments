@@ -126,13 +126,13 @@ func parseCLIFlags(args []string) (*CLIFlags, []string) {
 	})
 
 	// -- ExifTool 路徑 --
-	// -x / --exiftool：指定 ExifTool 執行檔路徑；傳入空字串可停用 ExifTool
+	// -x / --exiftool-path：指定 ExifTool 執行檔路徑；傳入空字串可停用 ExifTool
 	f.Func("x", "Set ExifTool executable path (empty to disable)", func(s string) error {
 		v := s
 		opts.ExiftoolPath = &v
 		return nil
 	})
-	f.Func("exiftool", "Set ExifTool executable path (empty to disable)", func(s string) error {
+	f.Func("exiftool-path", "Set ExifTool executable path (empty to disable)", func(s string) error {
 		v := s
 		opts.ExiftoolPath = &v
 		return nil
@@ -143,15 +143,28 @@ func parseCLIFlags(args []string) (*CLIFlags, []string) {
 	f.BoolVar(&opts.Recursive, "r", false, "Process subdirectories recursively")
 	f.BoolVar(&opts.Recursive, "recursive", false, "Process subdirectories recursively")
 
-	// -- 多層副檔名（啟用） --
-	// -me / --multi-ext：將多層副檔名視為檔名的一部分
-	f.BoolFunc("me", "Treat multi-level extensions as part of filename", func(s string) error {
+	// -- 多重副檔名（啟用） --
+	// -m / --multi-ext：支援多重副檔名（剝離所有副檔名）
+	f.BoolFunc("m", "Support multi-level extensions (strip all extensions)", func(s string) error {
 		v := true
 		opts.MultiExt = &v
 		return nil
 	})
-	f.BoolFunc("multi-ext", "Treat multi-level extensions as part of filename", func(s string) error {
+	f.BoolFunc("multi-ext", "Support multi-level extensions (strip all extensions)", func(s string) error {
 		v := true
+		opts.MultiExt = &v
+		return nil
+	})
+
+	// -- 多重副檔名（停用） --
+	// -nm / --no-multi-ext：不支援多重副檔名（僅剝離最後一層副檔名）
+	f.BoolFunc("nm", "Disable multi-level extension support (strip only last)", func(s string) error {
+		v := false
+		opts.MultiExt = &v
+		return nil
+	})
+	f.BoolFunc("no-multi-ext", "Disable multi-level extension support (strip only last)", func(s string) error {
+		v := false
 		opts.MultiExt = &v
 		return nil
 	})

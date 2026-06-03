@@ -22,10 +22,10 @@ type Config struct {
 	//   指向 ""  ：使用者明確留空，代表僅使用內建解析、不使用 ExifTool
 	//   指向路徑 ：使用指定路徑的 ExifTool
 	ExiftoolPath *string `json:"exiftoolpath,omitempty"`
-	// MultiExt 決定是否將多層副檔名視為檔名的一部分
-	//   false（預設）：剝離所有副檔名，僅保留不含任何副檔名的基底名稱
+	// MultiExt 決定是否支援多重副檔名（將多層副檔名都視為副檔名）
+	//   true（預設）：所有副檔名一併剝離，僅保留不含任何副檔名的基底名稱
 	//     例如 "KYS0001.ARW.dop" → <*> = "KYS0001"
-	//   true：僅剝離最後一層副檔名，中間層視為檔名的一部分
+	//   false：僅最後一層視為副檔名，中間層保留為檔名的一部分
 	//     例如 "KYS0001.ARW.dop" → <*> = "KYS0001.ARW"
 	MultiExt bool `json:"multiext"`
 	// NoColor 決定是否停用彩色輸出
@@ -107,7 +107,7 @@ func LoadConfig() Config {
 	data, err := os.ReadFile(configPath)
 
 	// 初始化預設配置：開啟確認預覽與結束暫停
-	defaultConf := Config{Format: defaultFormat, Confirm: true, EndPause: true}
+	defaultConf := Config{Format: defaultFormat, Confirm: true, EndPause: true, MultiExt: true}
 
 	// 若讀取失敗（例如檔案不存在），直接回傳預設設定
 	if err != nil {

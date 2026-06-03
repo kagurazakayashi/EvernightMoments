@@ -47,9 +47,10 @@ File/folder paths are positional arguments placed at the end. Multiple paths and
 | `-ny` | `--no-confirm`   | `bool`     | `confirm`       | Disable preview confirmation                    |
 | `-p`  | `--pause`        | `bool`     | `endpause`      | Enable end‑of‑run pause (Windows safety)        |
 | `-np` | `--no-pause`     | `bool`     | `endpause`      | Disable end‑of‑run pause                        |
-| `-x`  | `--exiftool`     | `string`   | `exiftoolpath`  | Path to ExifTool executable (empty = disable)   |
+| `-x`  | `--exiftool-path` | `string`   | `exiftoolpath`  | Path to ExifTool executable (empty = disable)   |
 | `-r`  | `--recursive`    | `bool`     | —               | Recurse into subdirectories                     |
-| `-me` | `--multi-ext`    | `bool`     | `multiext`      | Treat multi-level extensions as part of filename |
+| `-m`  | `--multi-ext`    | `bool`     | `multiext`      | Enable multi-level extension support (default)   |
+| `-nm` | `--no-multi-ext` | `bool`     | `multiext`      | Disable multi-level extension support            |
 | `-nc` | `--no-color`     | `bool`     | `nocolor`       | Disable colored terminal output                  |
 
 `-h` / `--help` prints the full flag list.
@@ -83,7 +84,7 @@ Legacy config (same directory as executable, named `<exe>.json`) is auto‑migra
   "confirm": true,
   "endpause": true,
   "exiftoolpath": "C:\\Tools\\exiftool.exe",
-  "multiext": false,
+  "multiext": true,
   "nocolor": false
 }
 ```
@@ -97,7 +98,7 @@ Legacy config (same directory as executable, named `<exe>.json`) is auto‑migra
 | `confirm`      | `bool`     | `true`                                          | Show preview and ask y/N before renaming                         |
 | `endpause`     | `bool`     | `true`                                          | Wait for Enter before exit (prevents Windows console auto‑close) |
 | `exiftoolpath` | `*string`  | `null` (auto‑detect on next run if unset)       | `null` = auto‑detect, `""` = disable ExifTool, `"path"` = use    |
-| `multiext`     | `bool`     | `false`                                         | `true` = preserve intermediate extensions as filename; `false` = strip all extensions |
+| `multiext`     | `bool`     | `true`                                          | `true` = preserve intermediate extensions as filename; `false` = strip all extensions |
 | `nocolor`      | `bool`     | `false`                                         | `true` = disable ANSI color codes in output |
 
 ANSI color codes are supported on both Windows CMD (10+) and Linux/macOS terminals. On Windows, virtual terminal processing is enabled automatically at startup via `SetConsoleMode(ENABLE_VIRTUAL_TERMINAL_PROCESSING)`.
@@ -127,8 +128,8 @@ Defined in `format.go`. Case‑sensitive.
 Default format: `"<YYYY><MM><DD>_<HH><mm><ss>_<*>"`
 
 `<*>` behavior depends on `multiext` config:
-- `multiext=false` (default): strips all extensions (e.g. `photo.ARW.dop` → `photo`)
-- `multiext=true`: strips only the last extension (e.g. `photo.ARW.dop` → `photo.ARW`)
+- `multiext=true` (default): strips all extensions (e.g. `photo.ARW.dop` → `photo`)
+- `multiext=false`: strips only the last extension (e.g. `photo.ARW.dop` → `photo.ARW`)
 
 In both cases the last extension (`.dop`) is re‑appended after `<*>` substitution.
 

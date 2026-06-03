@@ -31,12 +31,13 @@ func GenerateNewName(format string, t time.Time, originalPath string, index int,
 	// 依 multiExt 設定決定 nameWithoutExt 的計算方式
 	var nameWithoutExt string
 	if multiExt {
-		// 僅剝離最後一層副檔名，中間層保留為檔名的一部分
-		nameWithoutExt = strings.TrimSuffix(originalName, ext)
-	} else {
-		// 剝離所有副檔名，不將多層副檔名視為檔名
+		// 支援多重副檔名：將所有副檔名都視為副檔名，全部剝離
 		// 例如 "KYS0001.ARW.dop" → "KYS0001"
 		nameWithoutExt = stripAllExtensions(originalName)
+	} else {
+		// 僅最後一層視為副檔名，中間層保留為檔名的一部分
+		// 例如 "KYS0001.ARW.dop" → "KYS0001.ARW"
+		nameWithoutExt = strings.TrimSuffix(originalName, ext)
 	}
 
 	// 定義替換對映清單，將格式標籤映射至實際數值

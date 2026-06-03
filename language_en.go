@@ -76,8 +76,8 @@ func Language_en() {
 		"Exif说明":    "Specify the ExifTool executable path to read more accurate capture times. Leave empty to use only the built-in parser. Click the \"Auto-detect\" button below to detect again.",
 		"Exif未找到":   "ExifTool not found; the built-in parser will be used.",
 		"Exif已找到":   "ExifTool detected",
-		"多层副档名":    "Long ext file",
-		"多层副档名说明": "Treat multi-level extensions (e.g. .ARW.dop) as part of the filename? If enabled, only the last extension is stripped; the original filename includes intermediate extensions. If disabled (default), all extensions are stripped.",
+		"多层副档名":    "Multi ext",
+		"多层副档名说明": "Support multi-level extensions (e.g. .ARW.dop)? If enabled (default), all extensions are stripped from the filename — only the bare base name is kept. If disabled, only the last extension is stripped; intermediate extensions are preserved as part of the filename.",
 		"彩色输出":    "Color output",
 		"彩色输出说明": "Enable colored terminal output? Disable this if you are redirecting output or using the tool via an AI agent.",
 	})
